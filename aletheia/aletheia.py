@@ -98,16 +98,21 @@ class Aletheia:
             raise FileNotFoundError("Specified file doesn't exist")
 
         with open(path, "rb") as f:
+
             key_url = subprocess.check_output(
                 ("exiftool", "-s", "-s", "-s", "-ImageSupplierID", "-"),
                 stdin=f
             ).strip()
+
             f.seek(0)
+
             signature = base64.decodebytes(subprocess.check_output(
                 ("exiftool", "-s", "-s", "-s", "-ImageSupplierImageID", "-"),
                 stdin=f
             ).strip())
+
             f.seek(0)
+
             image_data = subprocess.check_output(
                 ("exiftool", "-all=", "-"),
                 stdin=f
