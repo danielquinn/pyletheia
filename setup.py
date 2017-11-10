@@ -45,7 +45,6 @@ setup(
     ],
     keywords=["Command Line", "verification", "fake news"],
     classifiers=[
-        "License :: OSI Approved :: Affero GNU General Public License v3 (AGPLv3)",
         "Operating System :: POSIX",
         "Operating System :: Unix",
         "Programming Language :: Python",
