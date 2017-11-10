@@ -133,10 +133,7 @@ Sign an image with your private key
 
     from aletheia.utils import sign
 
-    my_image_file = "/path/to/file.jpg"
-    public_key_location = "https://example.com/my-public-key.pub"
-
-    sign(my_image_file, url)
+    sign("/path/to/file.jpg", "https://example.com/my-public-key.pub")
 
 So long as you've got your public/private key pair in ``${HOME}/aletheia/``,
 ``sign()`` will modify the metadata on your file to include a signature and
@@ -148,10 +145,10 @@ There is also a ``sign_bulk()`` utility for multiple files:
 
     from aletheia.utils import sign
 
-    my_image_files = ("/path/to/file1.jpg", "/path/to/file1.jpg")
-    public_key_location = "https://example.com/my-public-key.pub"
-
-    sign(my_image_files, url)
+    sign(
+        ("/path/to/file1.jpg", "/path/to/file2.jpg"),
+        "https://example.com/my-public-key.pub"
+    )
 
 
 Verify the image with your public key
@@ -174,4 +171,4 @@ There's also a ``verify_bulk()`` utility for multiple files:
 
     from aletheia.utils import verify
 
-    verify_bulk(("/path/to/file.jpg", "/path/to/file.jpg"))
+    verify_bulk(("/path/to/file1.jpg", "/path/to/file2.jpg"))
