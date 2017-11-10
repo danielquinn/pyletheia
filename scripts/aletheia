@@ -9,7 +9,6 @@
 import argparse
 import sys
 
-from cryptography.exceptions import InvalidSignature
 from aletheia.utils import generate, sign, verify
 
 
@@ -71,14 +70,14 @@ class Command:
 
     @classmethod
     def verify(cls, args):
-        try:
-            verify(args.path)
-        except InvalidSignature:
-            print("There's something wrong with that file")
-            sys.exit(1)
 
-        print("The file appears to be legit")
-        sys.exit(0)
+        if verify(args.path):
+            print("The file appears to be legit")
+            sys.exit(0)
+
+        print("There's something wrong with that file")
+        sys.exit(1)
+
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ from hashlib import sha512
 
 import requests
 
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
@@ -118,17 +119,19 @@ class Aletheia:
                 stdin=f
             )
 
-        self._get_public_key(key_url).verify(
-            signature,
-            image_data,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256()
-        )
-
-        return True
+        try:
+            self._get_public_key(key_url).verify(
+                signature,
+                image_data,
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+            return True
+        except InvalidSignature:
+            return False
 
     def _get_private_key(self):
         """

@@ -16,10 +16,12 @@ def sign_bulk(paths, public_key_url):
 
 
 def verify(path):
-    Aletheia().verify(path)
+    return Aletheia().verify(path)
 
 
 def verify_bulk(paths):
     aletheia = Aletheia()
+    results = {}
     for path in paths:
-        aletheia.verify(path)
+        results[path] = aletheia.verify(path)
+    return results
