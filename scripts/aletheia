@@ -7,8 +7,10 @@
 #
 
 import argparse
+import os
 import sys
 
+from aletheia.aletheia import Aletheia
 from aletheia.utils import generate, sign, verify
 
 
@@ -49,6 +51,15 @@ class Command:
 
     @classmethod
     def generate(cls, *args):
+
+        private = os.path.join(Aletheia.HOME, "aletheia.pem")
+        if os.path.exists(private):
+            print(
+                "It looks like you already have a key setup at {}.\n"
+                "Exiting prematurely just to be safe.".format(private)
+            )
+            sys.exit(1)
+
         print("Generating private/public key pair...")
         generate()
         print("""
