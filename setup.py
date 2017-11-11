@@ -31,8 +31,8 @@ setup(
     maintainer="Daniel Quinn",
     maintainer_email="code@danielquinn.org",
     install_requires=[
-        "cryptography==2.1.2",
-        "requests==2.18.4",
+        "cryptography>=2.1.3",
+        "requests>=2.18.4",
     ],
     tests_require=[
     ],
