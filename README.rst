@@ -19,7 +19,7 @@ The process is pretty simple:
 System Requirements
 -------------------
 
-Aletheia makes us of the excellent Exiftool program which is available in most
+Aletheia makes use of the excellent Exiftool program which is available in most
 Linux distributions:
 
 Debian Linux and other derivatives like Ubuntu & Mint
