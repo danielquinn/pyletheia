@@ -1,17 +1,3 @@
-#
-# Python API:
-#
-#   from aletheia import generate, sign, verify
-#
-#   generate()
-#
-#   sign(path, public_key_url)
-#   sign_bulk(paths, public_key_url)
-#
-#   verify(path)
-#   verify_bulk(paths)
-#
-
 import base64
 import json
 import logging

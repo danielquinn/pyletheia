@@ -2,9 +2,7 @@ import os
 from os.path import abspath, dirname, join
 from setuptools import setup
 
-__version__ = ()
-with open("aletheia/version.py") as f:
-    exec(f.read())
+from aletheia import __version__
 
 # Allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
