@@ -16,33 +16,6 @@ The process is pretty simple:
 3. Publish your public key
 4. Verify the image with your public key
 
-System Requirements
--------------------
-
-Aletheia makes use of the excellent Exiftool program which is available in most
-Linux distributions:
-
-Debian Linux and other derivatives like Ubuntu & Mint
-.....................................................
-
-.. code:: bash
-
-    $ sudo apt install libimage-exiftool-perl
-
-Arch Linux
-..........
-
-.. code:: bash
-
-    $ sudo pacman -S perl-image-exiftool
-
-Gentoo Linux
-............
-
-.. code:: bash
-
-    $ sudo emerge exiftool
-
 
 Installation
 ------------
@@ -52,6 +25,13 @@ As this is a Python package, use ``pip``:
 .. code:: bash
 
     $ pip install aletheia
+
+Configuration
+-------------
+
+Aletheia puts all of the required key files and cached public keys into
+``${ALETHEIA_HOME}`` which by default is ``${HOME}/.config/aletheia``.  You
+can override this by setting it in the environment.
 
 
 Command Line
@@ -78,9 +58,9 @@ Generate your public/private key pair
     private key, it can be verified by reading the public key at that
     URL.
 
-Your public & private key will be stored in ``${HOME}/.aletheia/``.  For
-Aletheia to work, you need to publish your public key on a website somewhere so
-it can be used to verify files later.
+Your public & private key will be stored in ``${ALETHEIA_HOME}``. For Aletheia
+to work, you need to publish your public key on a website somewhere so it can
+be used to verify files later.
 
 
 Sign an image with your private key
@@ -123,7 +103,7 @@ Generate your public/private key pair
     generate()
 
 Just like the command line utility, ``generate()`` will create your
-public/private key pair in ``${HOME}/aletheia``.
+public/private key pair in ``${ALETHEIA_HOME}``.
 
 
 Sign an image with your private key
@@ -135,9 +115,9 @@ Sign an image with your private key
 
     sign("/path/to/file.jpg", "https://example.com/my-public-key.pub")
 
-So long as you've got your public/private key pair in ``${HOME}/aletheia/``,
-``sign()`` will modify the metadata on your file to include a signature and
-URL for your public key.
+So long as you've got your public/private key pair in ``${ALETHEIA_HOME}``,
+``sign()`` will modify the metadata on your file to include a signature and URL
+for your public key.
 
 There is also a ``sign_bulk()`` utility for multiple files:
 

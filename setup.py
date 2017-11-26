@@ -33,8 +33,11 @@ setup(
     install_requires=[
         "cryptography>=2.1.3",
         "requests>=2.18.4",
+        "py3exiv2>=0.2.1",
     ],
     tests_require=[
+        "pytest",
+        "pytest-sugar"
     ],
     extras_require={
         "doc": ["sphinx", "sphinx_rtd_theme"],
