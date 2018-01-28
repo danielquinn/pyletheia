@@ -34,6 +34,7 @@ setup(
         "requests>=2.18.4",
         "py3exiv2>=0.2.1",
         "python-magic>=0.4.15",
+        "mutagen>=1.40.0"
     ],
     tests_require=[
         "pytest",
