@@ -29,9 +29,11 @@ setup(
     maintainer="Daniel Quinn",
     maintainer_email="code@danielquinn.org",
     install_requires=[
+        "Pillow>=5.0.0",
         "cryptography>=2.1.3",
         "requests>=2.18.4",
         "py3exiv2>=0.2.1",
+        "python-magic>=0.4.15",
     ],
     tests_require=[
         "pytest",
