@@ -1,1 +1,2 @@
-LICENSE
+include README.rst LICENSE
+recursive-include tests scripts

@@ -8,16 +8,17 @@ from aletheia import __version__
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 # Get proper long description for package
-current_dir = dirname(abspath(__file__))
-
-with open(join(current_dir, "README.rst")) as f:
+with open(join(dirname(abspath(__file__)), "README.rst")) as f:
     description = f.read()
 
 # Get the long description from README.md
 setup(
     name="aletheia",
     version=".".join([str(_) for _ in __version__]),
-    packages=["aletheia"],
+    packages=[
+        "aletheia",
+        "aletheia.file_types"
+    ],
     include_package_data=True,
     license="AGPLv3",
     description="A Python implementation of Aletheia",
