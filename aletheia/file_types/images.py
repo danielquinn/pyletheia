@@ -29,7 +29,7 @@ class JpegFile(File):
         with Image.open(self.path) as im:
             signature = self._generate_signature(private_key, im.tobytes())
 
-        # self.logger.debug("Signature generated: %s", signature)
+        self.logger.debug("Signature generated: %s", signature)
 
         payload = json.dumps({
             "version": self.SCHEMA_VERSION,
