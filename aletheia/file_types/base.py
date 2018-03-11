@@ -41,9 +41,26 @@ class File(LoggingMixin):
         raise UnknownFileTypeError()
 
     def sign(self, private_key, public_key_url):
+        """
+        Override this method to generate a signature from the raw data of your
+        particular file format and write it to the metadata layer in the
+        following format:
+
+          {"version": int, "public-key": url, "signature": signature}
+
+        :param private_key     key  The private key used for signing
+        :param public_key_url  str  The URL where you're storing the public key
+
+        :return None
+        """
         raise NotImplementedError()
 
     def verify(self):
+        """
+        Attempt to verify the origin of a file by checking its local signature
+        against the public key listed in the file.
+        :return: boolean  ``True`` if verified, `False`` if not.
+        """
         raise NotImplementedError()
 
     def _generate_signature(self, private_key, raw_data):
