@@ -16,6 +16,6 @@ class LoggingMixin:
             return self._logger
 
         self._logger = logging.getLogger(
-            ".".join([__name__, self.__class__.__name__]))
+            ".".join(["pyletheia", __name__, self.__class__.__name__]))
 
         return self.logger
