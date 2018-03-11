@@ -13,7 +13,7 @@ class AletheiaTestCase(TestCase):
 
     SCRATCH = "/tmp/aletheia-tests"
     IMAGE = os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "data", "syntax.jpg"))
+        os.path.join(os.path.dirname(__file__), "data", "test.jpg"))
 
     def __init__(self, *args):
         TestCase.__init__(self, *args)
@@ -59,7 +59,7 @@ class AletheiaTestCase(TestCase):
 
         # Copy our test file to SCRATCH so we can fiddle with it
 
-        image_path = os.path.join(self.SCRATCH, "syntax.jpg")
+        image_path = os.path.join(self.SCRATCH, "test.jpg")
         shutil.copyfile(self.IMAGE, image_path)
 
         # Sign the image
