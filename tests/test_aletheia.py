@@ -12,14 +12,17 @@ from aletheia.aletheia import Aletheia
 class AletheiaTestCase(TestCase):
 
     SCRATCH = "/tmp/aletheia-tests"
-    IMAGE = os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "data", "test.jpg"))
+    TEST_FILES = {
+      "jpg": os.path.normpath(
+        os.path.join(os.path.dirname(__file__), "data", "test.jpg")),
+    }
 
     def __init__(self, *args):
         TestCase.__init__(self, *args)
         logging.basicConfig(level=logging.DEBUG)
 
     def setUp(self):
+        shutil.rmtree(self.SCRATCH, ignore_errors=True)
         os.makedirs(os.path.join(self.SCRATCH, "public-keys"), exist_ok=True)
 
     def tearDown(self):
@@ -57,33 +60,35 @@ class AletheiaTestCase(TestCase):
         self.assertTrue(
             os.path.exists(os.path.join(self.SCRATCH, "aletheia.pub")))
 
-        # Copy our test file to SCRATCH so we can fiddle with it
+        for suffix, source_path in self.TEST_FILES.items():
 
-        image_path = os.path.join(self.SCRATCH, "test.jpg")
-        shutil.copyfile(self.IMAGE, image_path)
+            # Copy our test file to SCRATCH so we can fiddle with it
 
-        # Sign the image
+            file_path = os.path.join(self.SCRATCH, "test.{}".format(suffix))
+            shutil.copyfile(source_path, file_path)
 
-        public_key_url = "https://example.com/aletheia.pub"
-        aletheia.sign(image_path, public_key_url)
-        with open(self.IMAGE, "rb") as original:
-            with open(image_path, "rb") as modified:
-                self.assertNotEqual(
-                    sha512(original.read()),
-                    sha512(modified.read())
+            # Sign the file
+
+            public_key_url = "https://example.com/aletheia.pub"
+            aletheia.sign(file_path, public_key_url)
+            with open(source_path, "rb") as original:
+                with open(file_path, "rb") as modified:
+                    self.assertNotEqual(
+                        sha512(original.read()),
+                        sha512(modified.read())
+                    )
+
+            # Put the public key in the cache so we don't try to fetch it.
+
+            shutil.copyfile(
+                os.path.join(self.SCRATCH, "aletheia.pub"),
+                os.path.join(
+                    self.SCRATCH,
+                    "public-keys",
+                    sha512(public_key_url.encode("utf-8")).hexdigest()
                 )
-
-        # Put the public key in the cache so we don't try to fetch it.
-
-        shutil.copyfile(
-            os.path.join(self.SCRATCH, "aletheia.pub"),
-            os.path.join(
-                self.SCRATCH,
-                "public-keys",
-                sha512(public_key_url.encode("utf-8")).hexdigest()
             )
-        )
 
-        # Verify the image
+            # Verify the file
 
-        self.assertTrue(aletheia.verify(image_path))
+            self.assertTrue(aletheia.verify(file_path))

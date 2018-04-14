@@ -1,7 +1,6 @@
 import json
 
 import pyexiv2
-from cryptography.exceptions import InvalidSignature
 from PIL import Image
 
 from .base import File
@@ -9,8 +8,11 @@ from .base import File
 
 class JpegFile(File):
 
-    SCHEMA_VERSION = 1
     SUPPORTED_TYPES = ("image/jpeg",)
+
+    def get_raw_data(self):
+        with Image.open(self.path) as im:
+            return im.tobytes()
 
     def sign(self, private_key, public_key_url):
         """
@@ -26,16 +28,11 @@ class JpegFile(File):
         :return None
         """
 
-        with Image.open(self.path) as im:
-            signature = self._generate_signature(private_key, im.tobytes())
+        signature = self.generate_signature(private_key)
 
         self.logger.debug("Signature generated: %s", signature)
 
-        payload = json.dumps({
-            "version": self.SCHEMA_VERSION,
-            "public-key": public_key_url,
-            "signature": signature.decode()
-        }, separators=(",", ":"))
+        payload = self.generate_payload(public_key_url, signature)
 
         metadata = pyexiv2.ImageMetadata(self.path)
         metadata.read()
@@ -62,14 +59,4 @@ class JpegFile(File):
 
         self.logger.debug("Signature found: %s", signature)
 
-        with Image.open(self.path) as im:
-            try:
-                self._verify_signature(
-                    self._get_public_key(key_url),
-                    signature.encode("utf-8"),
-                    im.tobytes()
-                )
-                return True
-            except InvalidSignature:
-                self.logger.error("Bad signature")
-                return False
+        return self.verify_signature(key_url, signature)

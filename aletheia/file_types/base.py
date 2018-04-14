@@ -1,12 +1,15 @@
-import base64
+import binascii
 import hashlib
+import json
 import os
 
-import magic
 import requests
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric import padding, utils
+
+import magic
 
 from ..common import LoggingMixin
 from ..exceptions import UnknownFileTypeError
@@ -17,6 +20,7 @@ class File(LoggingMixin):
     The base class for any type of file we want to sign.
     """
 
+    SCHEMA_VERSION = 1
     SUPPORTED_TYPES = ()
 
     def __init__(self, path, public_key_cache):
@@ -35,10 +39,25 @@ class File(LoggingMixin):
         """
 
         mimetype = magic.from_file(path, mime=True)
-        for klass in cls.__subclasses__():
+        for klass in cls.get_subclasses():
             if mimetype in klass.SUPPORTED_TYPES:
                 return klass(path, public_key_cache)
         raise UnknownFileTypeError()
+
+    @classmethod
+    def get_subclasses(cls):
+        for subclass in cls.__subclasses__():
+            yield from subclass.get_subclasses()
+            if hasattr(subclass, "SUPPORTED_TYPES"):
+                yield subclass
+
+    def get_raw_data(self):
+        """
+        This should return the raw binary data of file -- the part that
+        contains the media, so no header data.  This is accomplished in a
+        variety of ways, depending on the file format.
+        """
+        raise NotImplementedError()
 
     def sign(self, private_key, public_key_url):
         """
@@ -63,43 +82,54 @@ class File(LoggingMixin):
         """
         raise NotImplementedError()
 
-    def _generate_signature(self, private_key, raw_data):
+    def generate_signature(self, private_key):
         """
         Use the private key to generate a signature from raw image data.
 
         :param private_key: The private key with which we sign the data.
-        :param raw_data: Binary data we want to sign.
         :return: str A signature, encoded as base64
         """
-        return base64.encodebytes(private_key.sign(
-            raw_data,
+        return binascii.hexlify(private_key.sign(
+            self.get_raw_data(),
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH
             ),
             hashes.SHA256()
-        )).strip()
+        ))
 
-    def _verify_signature(self, public_key, signature, raw_data):
+    def generate_payload(self, public_key_url, signature):
+        return json.dumps({
+            "version": self.SCHEMA_VERSION,
+            "public-key": public_key_url,
+            "signature": signature.decode()
+        }, separators=(",", ":"))
+
+    def verify_signature(self, key_url, signature):
         """
         Use the public key (found either by fetching it online or pulling it
         from the local cache to verify the signature against the image data.
         This method raises an exception on failure, returns None on a pass.
 
-        :param public_key: The public key we use to verify the file
+        :param key_url: The URL for the public key we'll use to verify the file
         :param signature: The signature found in the file
-        :param raw_data: Binary data we want to verify
         :return: None
         """
-        public_key.verify(
-            base64.decodebytes(signature),
-            raw_data,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256()
-        )
+        try:
+            self._get_public_key(key_url).verify(
+                binascii.unhexlify(signature),
+                self.get_raw_data(),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+        except InvalidSignature:
+            self.logger.error("Bad signature")
+            return False
+
+        return True
 
     def _get_public_key(self, url):
         """
