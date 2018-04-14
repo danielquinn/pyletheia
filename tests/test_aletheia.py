@@ -15,6 +15,8 @@ class AletheiaTestCase(TestCase):
     TEST_FILES = {
       "jpg": os.path.normpath(
         os.path.join(os.path.dirname(__file__), "data", "test.jpg")),
+      "mp3": os.path.normpath(
+        os.path.join(os.path.dirname(__file__), "data", "test.mp3")),
     }
 
     def __init__(self, *args):
