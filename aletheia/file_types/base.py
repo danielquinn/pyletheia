@@ -161,3 +161,61 @@ class File(LoggingMixin):
                 return self._get_public_key(url)
 
         raise RuntimeError("The specified URL does not contain a public key")
+
+
+class LargeFile(File):
+    """
+    For larger files like audio & video, the signature methods are a little
+    different so we don't end up busting our RAM limits.
+    """
+
+    def generate_signature(self, private_key):
+
+        block_size = 16 * 1024
+        raw_data = self.get_raw_data()
+
+        chosen_hash = hashes.SHA512()
+        hasher = hashes.Hash(chosen_hash, default_backend())
+
+        buffer = raw_data.read(block_size)
+        while len(buffer) > 0:
+            hasher.update(buffer)
+            buffer = raw_data.read(block_size)
+
+        return binascii.hexlify(private_key.sign(
+            hasher.finalize(),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA512()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            utils.Prehashed(chosen_hash)
+        ))
+
+    def verify_signature(self, key_url, signature):
+
+        block_size = 16 * 1024
+
+        chosen_hash = hashes.SHA512()
+        hasher = hashes.Hash(chosen_hash, default_backend())
+        raw = self.get_raw_data()
+
+        buffer = raw.read(block_size)
+        while len(buffer) > 0:
+            hasher.update(buffer)
+            buffer = raw.read(block_size)
+
+        try:
+            self._get_public_key(key_url).verify(
+                binascii.unhexlify(signature),
+                hasher.finalize(),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA512()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                utils.Prehashed(chosen_hash)
+            )
+        except InvalidSignature:
+            self.logger.error("Bad signature")
+            return False
+
+        return True
