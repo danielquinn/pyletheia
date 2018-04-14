@@ -1,17 +1,13 @@
-import json
-
-from cryptography.exceptions import InvalidSignature
-
-from .base import File
+from .base import LargeFile
 
 
-class MkvFile(File):
+class MkvLargeFile(LargeFile):
     pass
 
 
-class WebmFile(File):
+class WebmLargeFile(LargeFile):
     pass
 
 
-class Mp4File(File):
+class Mp4LargeFile(LargeFile):
     pass
