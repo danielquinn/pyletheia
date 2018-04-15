@@ -32,10 +32,11 @@ setup(
     install_requires=[
         "Pillow>=5.0.0",
         "cryptography>=2.1.3",
-        "requests>=2.18.4",
-        "py3exiv2>=0.2.1",
+        "mutagen>=1.40.0",
+        "piexif>=1.0.13",
         "python-magic>=0.4.15",
-        "mutagen>=1.40.0"
+        "requests>=2.18.4",
+        "six"
     ],
     tests_require=[
         "pytest",
