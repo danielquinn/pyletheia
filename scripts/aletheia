@@ -24,7 +24,7 @@ class Command:
 
         subparsers.add_parser(
             "generate",
-            help="Generate a public/private key pair for use in siging & 3rd "
+            help="Generate a public/private key pair for use in signing & 3rd "
                  "party verification. (Do this first)"
         )
 
@@ -52,7 +52,7 @@ class Command:
     @classmethod
     def generate(cls, *args):
 
-        private = os.path.join(Aletheia.HOME, "aletheia.pem")
+        private = Aletheia().private_key_path
         if os.path.exists(private):
             print(
                 "It looks like you already have a key setup at {}.\n"
