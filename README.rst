@@ -12,9 +12,9 @@ Process
 The process is pretty simple:
 
 1. Generate a public/private key pair
-2. Sign an image with the private key
+2. Sign a media file (image, audio, video) with the private key
 3. Publish your public key
-4. Verify the image with your public key
+4. People can now verify your media files with your public key
 
 
 Installation
