@@ -4,14 +4,13 @@ import shutil
 
 from hashlib import sha512
 from unittest.mock import patch
-from unittest import TestCase
 
 from aletheia.aletheia import Aletheia
+from .base import TestCase
 
 
-class AletheiaTestCase(TestCase):
+class StackTestCase(TestCase):
 
-    SCRATCH = "/tmp/aletheia-tests"
     TEST_FILES = {
       "jpg": os.path.normpath(
         os.path.join(os.path.dirname(__file__), "data", "test.jpg")),
@@ -20,17 +19,10 @@ class AletheiaTestCase(TestCase):
     }
 
     def __init__(self, *args):
-        TestCase.__init__(self, *args)
+        super(StackTestCase, self).__init__(*args)
         logging.basicConfig(level=logging.DEBUG)
 
-    def setUp(self):
-        shutil.rmtree(self.SCRATCH, ignore_errors=True)
-        os.makedirs(os.path.join(self.SCRATCH, "public-keys"), exist_ok=True)
-
-    def tearDown(self):
-        shutil.rmtree(self.SCRATCH)
-
-    @patch.dict("os.environ", {"ALETHEIA_HOME": SCRATCH})
+    @patch.dict("os.environ", {"ALETHEIA_HOME": TestCase.SCRATCH})
     def test_stack(self):
 
         aletheia = Aletheia()
