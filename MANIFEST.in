@@ -1,2 +1,4 @@
 include README.rst LICENSE
-recursive-include tests scripts
+recursive-include aletheia *.py
+recursive-include tests *
+recursive-include scripts *
