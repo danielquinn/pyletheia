@@ -1,10 +1,14 @@
 pyletheia
 =========
+|PyPi| |Thanks!|
 
 A Python implementation of `Aletheia`_.
 
 .. _Aletheia: https://github.com/danielquinn/aletheia
-
+.. |PyPi| image:: https://img.shields.io/pypi/v/aletheia.svg
+   :target: https://pypi.org/project/aletheia/
+.. |Thanks!| image:: https://img.shields.io/badge/THANKS-md-ff69b4.svg
+   :target: https://github.com/danielquinn/pyletheia/blob/master/THANKS.md
 
 Process
 -------
