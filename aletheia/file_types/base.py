@@ -4,12 +4,13 @@ import json
 import os
 
 import requests
+import six
+
+import magic
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, utils
-
-import magic
 
 from ..common import LoggingMixin
 from ..exceptions import UnknownFileTypeError
@@ -23,8 +24,24 @@ class File(LoggingMixin):
     SCHEMA_VERSION = 1
     SUPPORTED_TYPES = ()
 
-    def __init__(self, path, public_key_cache):
-        self.path = path
+    def __init__(self, source, public_key_cache):
+        """
+        :param source: Typically this will be a file path, but some modules may
+               support other types as well.  See ``images.JpegFile`` for an
+               example.
+        :param public_key_cache: The location on-disk where you're caching
+               public keys that have been downloaded for use in verification.
+        """
+
+        if isinstance(source, six.string_types):
+            if not os.path.exists(source):
+                raise FileNotFoundError(
+                    "Can't find the file you want to sign/verify: {}".format(
+                        source
+                    )
+                )
+
+        self.source = source
         self.public_key_cache = public_key_cache
 
     @classmethod
