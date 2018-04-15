@@ -3,15 +3,7 @@ import subprocess
 
 from mutagen.id3 import ID3, TPUB
 
-from .base import LargeFile
-
-
-class OggTheoraFile(LargeFile):
-    pass
-
-
-class OggVorbisFile(LargeFile):
-    pass
+from ..base import LargeFile
 
 
 class Mp3File(LargeFile):
@@ -23,7 +15,7 @@ class Mp3File(LargeFile):
         return subprocess.Popen(
             (
                 "ffmpeg",
-                "-i", self.path,
+                "-i", self.source,
                 "-vn",
                 "-codec:a", "copy",
                 "-map_metadata", "-1",
@@ -42,13 +34,13 @@ class Mp3File(LargeFile):
 
         payload = self.generate_payload(public_key_url, signature)
 
-        audio = ID3(self.path)
+        audio = ID3(self.source)
         audio.add(TPUB(encoding=3, text=payload))
         audio.save()
 
     def verify(self):
 
-        audio = ID3(self.path)
+        audio = ID3(self.source)
 
         try:
 
@@ -59,7 +51,7 @@ class Mp3File(LargeFile):
             key_url = payload["public-key"]
             signature = payload["signature"]
 
-        except (ValueError, IndexError, json.JSONDecodeError):
+        except (ValueError, TypeError, IndexError, json.JSONDecodeError):
             self.logger.error("Invalid format, or no signature found")
             return False
 
