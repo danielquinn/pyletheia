@@ -9,7 +9,7 @@ A Python implementation of `Aletheia`_.
    :target: https://pypi.org/project/aletheia/
 .. |Thanks!| image:: https://img.shields.io/badge/THANKS-md-ff69b4.svg
    :target: https://github.com/danielquinn/pyletheia/blob/master/THANKS.md
-.. |License| image:: https://img.shields.io/github/license/mashape/apistatus.svg
+.. |License| image:: https://img.shields.io/github/license/danielquinn/pyletheia.svg
    :target: https://github.com/danielquinn/pyletheia/blob/master/LICENSE
 
 Process
