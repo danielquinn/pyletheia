@@ -3,6 +3,8 @@
 * Dropped support for signing JpegImageFile objects.  The process was ugly and
   the overhead less-than-awesome.  Signing image files can still be done the
   standard way though: by operating on the file rather than the PIL object.
+* More tests!
+
 ## 0.1.0
 
 * Support for MP3 files
