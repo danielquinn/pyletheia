@@ -27,9 +27,10 @@ def generate(**kwargs):
 
 def sign(path, public_key_url, **kwargs):
     """
-    Attempts to sign an image with your private key.  If you provide a
+    Attempts to sign an file with your private key.  If you provide a
     ``private_key_path``, Aletheia will look for it there, otherwise it will
-    assume ``${ALETHEIA_HOME}/.aletheia/``
+    look for it in the environment under ``ALETHEIA_PRIVATE_KEY``, and failing
+    that, assume ``${ALETHEIA_HOME}/.aletheia/aletheia.pem``.
     """
     Aletheia(**kwargs).sign(path, public_key_url)
 
@@ -47,10 +48,10 @@ def sign_bulk(paths, public_key_url, **kwargs):
 def verify(path, **kwargs):
     """
     Aletheia will import the public key from the URL in the file's metadata and
-    attempt to verify the image data by comparing the key to the embedded
-    signature.  If the file is verified, it returns ``True``, otherwise it
-    returns ``False``.  Aside from the ``path``, all keyword arguments are
-    passed to the Aletheia constructor.
+    attempt to verify the data by comparing the key to the embedded signature.
+    If the file is verified, it returns ``True``, otherwise it returns
+    ``False``.  Aside from the ``path``, all keyword arguments are passed to
+    the Aletheia constructor.
     """
     return Aletheia(**kwargs).verify(path)
 

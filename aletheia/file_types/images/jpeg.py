@@ -24,9 +24,6 @@ class JpegFile(File):
 
         :param private_key     key  The private key used for signing
         :param public_key_url  str  The URL where you're storing the public key
-
-        :return None if we're operating on a file. If we're working with an
-                Image object, we return the signed object.
         """
 
         signature = self.generate_signature(private_key)
