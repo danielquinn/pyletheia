@@ -1,4 +1,5 @@
 import os
+import sys
 from os.path import abspath, dirname, join
 from setuptools import setup
 
@@ -6,6 +7,15 @@ from aletheia import __version__
 
 # Allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+
+# Shortcut for "publish" courtesy of the requests library
+if sys.argv[-1] == "publish":
+    os.system("rm -vr build dist")
+    os.system("python setup.py build")
+    os.system("python setup.py sdist bdist_wheel")
+    os.system("twine upload dist/*")
+    sys.exit()
+
 
 # Get proper long description for package
 with open(join(dirname(abspath(__file__)), "README.rst")) as f:
