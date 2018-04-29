@@ -25,10 +25,13 @@ class AletheiaTestCase(unittest.TestCase):
         with self.env:
             aletheia = Aletheia()
 
-        home = f"{self.SCRATCH}/.config/aletheia"
-        self.assertEqual(aletheia.private_key_path, f"{home}/aletheia.pem")
-        self.assertEqual(aletheia.public_key_path, f"{home}/aletheia.pub")
-        self.assertEqual(aletheia.public_key_cache, f"{home}/public-keys")
+        home = "{}/.config/aletheia".format(self.SCRATCH)
+        self.assertEqual(
+            aletheia.private_key_path, "{}/aletheia.pem".format(home))
+        self.assertEqual(
+            aletheia.public_key_path, "{}/aletheia.pub".format(home))
+        self.assertEqual(
+            aletheia.public_key_cache, "{}/public-keys".format(home))
 
     def test___init___with_values(self):
 
