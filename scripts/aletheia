@@ -10,7 +10,15 @@ import argparse
 import os
 import sys
 
+from cryptography.exceptions import InvalidSignature
+from termcolor import cprint
+
 from aletheia.aletheia import Aletheia
+from aletheia.exceptions import (
+    InvalidURLError,
+    PublicKeyNotExistsError,
+    UnknownFileTypeError
+)
 from aletheia.utils import generate, sign, verify
 
 
@@ -30,7 +38,8 @@ class Command:
 
         parser_sign = subparsers.add_parser("sign", help="Sign a file")
         parser_sign.add_argument("path")
-        parser_sign.add_argument("url")
+        parser_sign.add_argument(
+            "url", nargs="?", default=os.getenv("ALETHEIA_PUBLIC_KEY"))
 
         parser_verify = subparsers.add_parser(
             "verify", help="Verify the origin of a file")
@@ -75,19 +84,57 @@ class Command:
 
     @classmethod
     def sign(cls, args):
-        print("Signing {} with your private key".format(args.path))
+
+        if not args.url:
+            cprint(
+                "\nYou must specify the public key URL either in the "
+                "environment as ALETHEIA_PUBLIC_KEY_URL or on the command "
+                "line as the second argument.\n",
+                "red"
+            )
+            sys.exit(1)
+
         sign(args.path, args.url)
+        template = "\n  ✔  {} was signed with your private key\n"
+        cprint(template.format(args.path), "green")
         sys.exit(0)
 
     @classmethod
     def verify(cls, args):
 
-        if verify(args.path):
-            print("The file appears to be legit")
-            sys.exit(0)
+        try:
+            domain = verify(args.path)
+        except FileNotFoundError:
+            cprint(
+                "\n  ✖️  Aletheia can't find that file\n",
+                "red"
+            )
+            sys.exit(1)
+        except UnknownFileTypeError:
+            cprint(
+                "\n  ✖️  Aletheia doesn't recognise that file type\n",
+                "red"
+            )
+            sys.exit(2)
+        except InvalidURLError:
+            cprint(
+                "\n  ✖️  The public key URL in the file provided is invalid\n",
+                "red"
+            )
+            sys.exit(3)
+        except PublicKeyNotExistsError:
+            cprint(
+                "\n  ✖️  The specified URL does not contain a public key\n",
+                "red"
+            )
+            sys.exit(4)
+        except InvalidSignature:
+            cprint("\n  ✖️  There's something wrong with that file\n", "red")
+            sys.exit(5)
 
-        print("There's something wrong with that file")
-        sys.exit(1)
+        template = "\n  ✔️  The file is verified as having originated at {}\n"
+        cprint(template.format(domain), "green")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
