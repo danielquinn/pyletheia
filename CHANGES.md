@@ -1,3 +1,13 @@
+## 0.3.0
+
+* Added clours to the output of the command-line script.  This means a new
+  dependency on the `termcolor` library.
+* **Breaking**: `verify()` now raises various exceptions on failure rather
+  than simply returning `False`.  This was done to allow the command-line
+  script to show useful error messages.
+* The command-line script is a lot more helpful now in terms of error
+  messages.
+
 ## 0.2.0
 
 * Dropped support for signing JpegImageFile objects.  The process was ugly and
