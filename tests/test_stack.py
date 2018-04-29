@@ -22,6 +22,7 @@ class StackTestCase(TestCase):
         super(StackTestCase, self).__init__(*args)
         logging.basicConfig(level=logging.DEBUG)
 
+    @patch.dict("os.environ", {"HOME": TestCase.SCRATCH})
     @patch.dict("os.environ", {"ALETHEIA_HOME": TestCase.SCRATCH})
     def test_stack(self):
 
