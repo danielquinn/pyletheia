@@ -2,8 +2,10 @@ import os
 from hashlib import md5
 from unittest import mock
 
+from cryptography.exceptions import InvalidSignature
 from mutagen.id3 import ID3
 
+from aletheia.exceptions import UnparseableFileError
 from aletheia.file_types import Mp3File
 
 from ..base import TestCase
@@ -35,7 +37,21 @@ class Mp3TestCase(TestCase):
         path = self.copy_for_work("test.mp3")
 
         f = Mp3File(path, "")
-        self.assertFalse(f.verify())
+        self.assertRaises(UnparseableFileError, f.verify)
+
+    def test_verify_bad_signature(self):
+        cache = self.cache_public_key()
+        path = self.copy_for_work("test-bad-signature.mp3")
+
+        f = Mp3File(path, cache)
+        self.assertRaises(InvalidSignature, f.verify)
+
+    def test_verify_broken_signature(self):
+        cache = self.cache_public_key()
+        path = self.copy_for_work("test-broken-signature.mp3")
+
+        f = Mp3File(path, cache)
+        self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify_from_path(self):
 

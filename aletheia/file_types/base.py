@@ -2,6 +2,8 @@ import binascii
 import hashlib
 import json
 import os
+import re
+import urllib.parse
 
 import requests
 import six
@@ -13,7 +15,11 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, utils
 
 from ..common import LoggingMixin
-from ..exceptions import UnknownFileTypeError
+from ..exceptions import (
+    InvalidURLError,
+    PublicKeyNotExistsError,
+    UnknownFileTypeError
+)
 
 
 class File(LoggingMixin):
@@ -126,12 +132,13 @@ class File(LoggingMixin):
         """
         Use the public key (found either by fetching it online or pulling it
         from the local cache to verify the signature against the image data.
-        This method raises an exception on failure, returns None on a pass.
+        This method returns the domain of the verified server on success, and
+        raises an InvalidSignature on failure.
 
         :param key_url: The URL for the public key we'll use to verify the file
         :param signature: The signature found in the file
-        :return: None
         """
+
         try:
             self._get_public_key(key_url).verify(
                 binascii.unhexlify(signature),
@@ -142,11 +149,11 @@ class File(LoggingMixin):
                 ),
                 hashes.SHA256()
             )
-        except InvalidSignature:
+        except (InvalidSignature, binascii.Error):
             self.logger.error("Bad signature")
-            return False
+            raise InvalidSignature()
 
-        return True
+        return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
 
     def _get_public_key(self, url):
         """
@@ -231,8 +238,8 @@ class LargeFile(File):
                 ),
                 utils.Prehashed(chosen_hash)
             )
-        except InvalidSignature:
+        except (InvalidSignature, binascii.Error):
             self.logger.error("Bad signature")
-            return False
+            raise InvalidSignature()
 
-        return True
+        return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)

@@ -3,6 +3,7 @@ import subprocess
 
 from mutagen.id3 import ID3, TPUB
 
+from ...exceptions import UnparseableFileError
 from ..base import LargeFile
 
 
@@ -53,6 +54,6 @@ class Mp3File(LargeFile):
 
         except (ValueError, TypeError, IndexError, json.JSONDecodeError):
             self.logger.error("Invalid format, or no signature found")
-            return False
+            raise UnparseableFileError()
 
         return self.verify_signature(key_url, signature)

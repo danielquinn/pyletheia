@@ -3,7 +3,9 @@ from hashlib import md5
 from unittest import mock
 
 import piexif
+from cryptography.exceptions import InvalidSignature
 
+from aletheia.exceptions import UnparseableFileError
 from aletheia.file_types import JpegFile
 
 from ..base import TestCase
@@ -35,7 +37,23 @@ class JpegTestCase(TestCase):
         path = self.copy_for_work("test.jpg")
 
         f = JpegFile(path, "")
-        self.assertFalse(f.verify())
+        self.assertRaises(UnparseableFileError, f.verify)
+
+    def test_verify_bad_signature(self):
+
+        cache = self.cache_public_key()
+        path = self.copy_for_work("test-bad-signature.jpg")
+
+        f = JpegFile(path, cache)
+        self.assertRaises(InvalidSignature, f.verify)
+
+    def test_verify_broken_signature(self):
+
+        cache = self.cache_public_key()
+        path = self.copy_for_work("test-broken-signature.jpg")
+
+        f = JpegFile(path, cache)
+        self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify(self):
 

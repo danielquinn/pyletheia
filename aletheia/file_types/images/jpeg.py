@@ -3,6 +3,7 @@ import json
 import piexif
 import PIL.Image
 
+from ...exceptions import UnparseableFileError
 from ..base import File
 
 
@@ -52,7 +53,7 @@ class JpegFile(File):
             signature = data["signature"]
         except (KeyError, json.JSONDecodeError):
             self.logger.warning("Invalid format, or no signature found")
-            return False
+            raise UnparseableFileError()
 
         self.logger.debug("Signature found: %s", signature)
 
