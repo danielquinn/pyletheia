@@ -163,6 +163,9 @@ class File(LoggingMixin):
         :return: The public key
         """
 
+        if not url:
+            raise InvalidURLError()
+
         os.makedirs(self.public_key_cache, exist_ok=True)
 
         cache = os.path.join(
@@ -184,7 +187,7 @@ class File(LoggingMixin):
                     f.write(requests.get(url).content)
                 return self._get_public_key(url)
 
-        raise RuntimeError("The specified URL does not contain a public key")
+        raise PublicKeyNotExistsError()
 
 
 class LargeFile(File):
