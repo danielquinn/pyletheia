@@ -68,7 +68,7 @@ class Command:
             )
             return 1
 
-        cprint("  🔑  Generating private/public key pair...", "green")
+        cprint("\n  🔑  Generating private/public key pair...", "green")
         generate()
         cprint("""
             All finished!
@@ -79,7 +79,7 @@ class Command:
             publicly accessible URL so that when you sign a file with your
             private key, it can be verified by reading the public key at that
             URL.
-        """.replace("          ", ""), "white")
+        """.replace("          ", ""), "green")
 
     @classmethod
     def sign(cls, args):
@@ -145,7 +145,7 @@ class Command:
             cprint("\n  ✖️  There's something wrong with that file\n", "red")
             return 5
 
-        template = "\n  ✔️  The file is verified as having originated at {}\n"
+        template = "\n  ✔  The file is verified as having originated at {}\n"
         cprint(template.format(domain), "green")
 
         return 0
