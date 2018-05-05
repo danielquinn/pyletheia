@@ -12,6 +12,7 @@ A Python implementation of `Aletheia`_.
 .. |License| image:: https://img.shields.io/github/license/danielquinn/pyletheia.svg
    :target: https://github.com/danielquinn/pyletheia/blob/master/LICENSE
 
+
 Process
 -------
 
@@ -31,6 +32,7 @@ As this is a Python package, use ``pip``:
 .. code:: bash
 
     $ pip install aletheia
+
 
 Configuration
 -------------
@@ -53,16 +55,17 @@ Generate your public/private key pair
 .. code:: bash
 
     $ aletheia generate
-    Generating private/public key pair...
 
-    All finished!
+      🔑  Generating private/public key pair...
 
-    You now have two files: aletheia.pem (your private key) and
-    aletheia.pub (your public key).  Keep the former private, and share
-    the latter far-and-wide.  Importantly, place your public key at a
-    publicly accessible URL so that when you sign a file with your
-    private key, it can be verified by reading the public key at that
-    URL.
+      All finished!
+
+      You now have two files: aletheia.pem (your private key) and
+      aletheia.pub (your public key).  Keep the former private, and share
+      the latter far-and-wide.  Importantly, place your public key at a
+      publicly accessible URL so that when you sign a file with your
+      private key, it can be verified by reading the public key at that
+      URL.
 
 Your public & private key will be stored in ``${ALETHEIA_HOME}``. For Aletheia
 to work, you need to publish your public key on a website somewhere so it can
@@ -76,6 +79,8 @@ Sign an image with your private key
 
     $ aletheia sign file.jpg https://example.com/my-public-key.pub
 
+      ✔  file.jpg was signed with your private key
+
 Aletheia will modify the EXIF data on your image to include a signature and a
 link to where your public key can be found so when it comes time to verify it,
 everything that's necessary is available.
@@ -87,6 +92,8 @@ Verify the image with your public key
 .. code:: bash
 
     $ aletheia verify file.jpg
+
+      ✔  The file is verified as having originated at example.com
 
 Now, anyone who receives your image can verify its origin with this command so
 long as your public key remains available at the URL you used above.
