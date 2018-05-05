@@ -37,7 +37,7 @@ class TestCase(BaseTestCase):
         with open(os.path.join(self.DATA, "key.pub"), "rb") as f:
             return load_pem_public_key(f.read(), default_backend())
 
-    def cache_public_key(self):
+    def cache_public_key(self) -> str:
         cache = os.path.join(self.SCRATCH, "public-keys")
         shutil.copy(
             os.path.join(self.DATA, "key.pub"),
@@ -45,7 +45,7 @@ class TestCase(BaseTestCase):
         )
         return cache
 
-    def copy_for_work(self, name):
+    def copy_for_work(self, name: str) -> str:
         """
         Copy our test file to SCRATCH so we can fiddle with it.
         """

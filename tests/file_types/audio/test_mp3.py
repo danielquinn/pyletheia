@@ -8,7 +8,7 @@ from mutagen.id3 import ID3
 from aletheia.exceptions import UnparseableFileError
 from aletheia.file_types import Mp3File
 
-from ..base import TestCase
+from ...base import TestCase
 
 
 class Mp3TestCase(TestCase):

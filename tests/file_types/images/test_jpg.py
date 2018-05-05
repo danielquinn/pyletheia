@@ -8,7 +8,7 @@ from cryptography.exceptions import InvalidSignature
 from aletheia.exceptions import UnparseableFileError
 from aletheia.file_types import JpegFile
 
-from ..base import TestCase
+from ...base import TestCase
 
 
 class JpegTestCase(TestCase):

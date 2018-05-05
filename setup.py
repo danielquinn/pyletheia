@@ -57,9 +57,11 @@ setup(
         "doc": ["sphinx", "sphinx_rtd_theme"],
     },
     test_suite="pytest",
-    scripts=[
-        "scripts/aletheia",
-    ],
+    entry_points={
+        "console_scripts": [
+            "aletheia=aletheia.cli:Command.run"
+        ]
+    },
     keywords=["Command Line", "verification", "fake news"],
     classifiers=[
         "Operating System :: POSIX",

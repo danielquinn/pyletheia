@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #
 #   $ aletheia generate
 #   $ aletheia sign /path/to/file public-key-url
@@ -26,9 +24,9 @@ class Command:
 
     def __init__(self):
 
-        parser = argparse.ArgumentParser(prog="aletheia")
-        parser.set_defaults(func=parser.print_help)
-        subparsers = parser.add_subparsers(dest="subcommand")
+        self.parser = argparse.ArgumentParser(prog="aletheia")
+        self.parser.set_defaults(func=self.parser.print_help)
+        subparsers = self.parser.add_subparsers(dest="subcommand")
 
         subparsers.add_parser(
             "generate",
@@ -45,33 +43,34 @@ class Command:
             "verify", help="Verify the origin of a file")
         parser_verify.add_argument("path")
 
-        args = parser.parse_args()
+    @classmethod
+    def run(cls):
 
-        try:
-            if args.subcommand:
-                getattr(self, args.subcommand)(args)
-            else:
-                parser.print_help()
-        except (RuntimeError, FileNotFoundError) as e:
-            print(e, file=sys.stdout)
-            sys.exit(1)
+        instance = cls()
 
-        sys.exit(0)
+        args = instance.parser.parse_args()
+
+        if args.subcommand:
+            return getattr(instance, args.subcommand)(args)
+
+        instance.parser.print_help()
+        return 0
 
     @classmethod
     def generate(cls, *args):
 
         private = Aletheia().private_key_path
         if os.path.exists(private):
-            print(
+            cprint(
                 "It looks like you already have a key setup at {}.\n"
-                "Exiting prematurely just to be safe.".format(private)
+                "Exiting prematurely just to be safe.".format(private),
+                "yellow"
             )
-            sys.exit(1)
+            return 1
 
-        print("Generating private/public key pair...")
+        cprint("  🔑  Generating private/public key pair...", "green")
         generate()
-        print("""
+        cprint("""
             All finished!
 
             You now have two files: aletheia.pem (your private key) and
@@ -80,7 +79,7 @@ class Command:
             publicly accessible URL so that when you sign a file with your
             private key, it can be verified by reading the public key at that
             URL.
-        """.replace("            ", ""))
+        """.replace("          ", ""), "white")
 
     @classmethod
     def sign(cls, args):
@@ -92,12 +91,26 @@ class Command:
                 "line as the second argument.\n",
                 "red"
             )
-            sys.exit(1)
+            return 3
 
-        sign(args.path, args.url)
+        try:
+            sign(args.path, args.url)
+        except FileNotFoundError:
+            cprint(
+                "\n  ✖️  Aletheia can't find that file\n",
+                "red"
+            )
+            return 1
+        except UnknownFileTypeError:
+            cprint(
+                "\n  ✖️  Aletheia doesn't know how to sign that file type\n",
+                "red"
+            )
+            return 2
         template = "\n  ✔  {} was signed with your private key\n"
         cprint(template.format(args.path), "green")
-        sys.exit(0)
+
+        return 0
 
     @classmethod
     def verify(cls, args):
@@ -109,33 +122,34 @@ class Command:
                 "\n  ✖️  Aletheia can't find that file\n",
                 "red"
             )
-            sys.exit(1)
+            return 1
         except UnknownFileTypeError:
             cprint(
                 "\n  ✖️  Aletheia doesn't recognise that file type\n",
                 "red"
             )
-            sys.exit(2)
+            return 2
         except InvalidURLError:
             cprint(
                 "\n  ✖️  The public key URL in the file provided is invalid\n",
                 "red"
             )
-            sys.exit(3)
+            return 3
         except PublicKeyNotExistsError:
             cprint(
                 "\n  ✖️  The specified URL does not contain a public key\n",
                 "red"
             )
-            sys.exit(4)
+            return 4
         except InvalidSignature:
             cprint("\n  ✖️  There's something wrong with that file\n", "red")
-            sys.exit(5)
+            return 5
 
         template = "\n  ✔️  The file is verified as having originated at {}\n"
         cprint(template.format(domain), "green")
-        sys.exit(0)
+
+        return 0
 
 
 if __name__ == "__main__":
-    Command()
+    Command.run()

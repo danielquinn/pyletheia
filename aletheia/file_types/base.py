@@ -28,7 +28,6 @@ class File(LoggingMixin):
     """
 
     SCHEMA_VERSION = 1
-    SUPPORTED_TYPES = ()
 
     def __init__(self, source, public_key_cache):
         """
@@ -51,7 +50,7 @@ class File(LoggingMixin):
         self.public_key_cache = public_key_cache
 
     @classmethod
-    def build(cls, path, public_key_cache):
+    def build(cls, path: str, public_key_cache: str):
         """
         Attempt to find a subclass of File that understands this file and
         return an instance of that class.
