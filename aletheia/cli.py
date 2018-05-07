@@ -15,7 +15,8 @@ from aletheia.aletheia import Aletheia
 from aletheia.exceptions import (
     InvalidURLError,
     PublicKeyNotExistsError,
-    UnknownFileTypeError
+    UnknownFileTypeError,
+    UnparseableFileError
 )
 from aletheia.utils import generate, sign, verify
 
@@ -129,21 +130,27 @@ class Command:
                 "red"
             )
             return 2
+        except UnparseableFileError:
+            cprint(
+                "\n  ✖️  Aletheia can't find a signature in that file\n",
+                "red"
+            )
+            return 3
         except InvalidURLError:
             cprint(
                 "\n  ✖️  The public key URL in the file provided is invalid\n",
                 "red"
             )
-            return 3
+            return 4
         except PublicKeyNotExistsError:
             cprint(
                 "\n  ✖️  The specified URL does not contain a public key\n",
                 "red"
             )
-            return 4
+            return 5
         except InvalidSignature:
             cprint("\n  ✖️  There's something wrong with that file\n", "red")
-            return 5
+            return 6
 
         template = "\n  ✔  The file is verified as having originated at {}\n"
         cprint(template.format(domain), "green")
