@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Fix a bug in environment variable referencing for public key URL.
+
 ## 0.3.3
 
 * Error out gracefully if we attempt to verify a file that doesn't contain a

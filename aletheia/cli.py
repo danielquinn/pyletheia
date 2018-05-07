@@ -6,7 +6,6 @@
 
 import argparse
 import os
-import sys
 
 from cryptography.exceptions import InvalidSignature
 from termcolor import cprint
@@ -38,7 +37,7 @@ class Command:
         parser_sign = subparsers.add_parser("sign", help="Sign a file")
         parser_sign.add_argument("path")
         parser_sign.add_argument(
-            "url", nargs="?", default=os.getenv("ALETHEIA_PUBLIC_KEY"))
+            "url", nargs="?", default=os.getenv("ALETHEIA_PUBLIC_KEY_URL"))
 
         parser_verify = subparsers.add_parser(
             "verify", help="Verify the origin of a file")
@@ -87,8 +86,8 @@ class Command:
 
         if not args.url:
             cprint(
-                "\nYou must specify the public key URL either in the "
-                "environment as ALETHEIA_PUBLIC_KEY_URL or on the command "
+                "\n  ✖️  You must specify the public key URL either in the "
+                "environment as \n  ALETHEIA_PUBLIC_KEY_URL or on the command "
                 "line as the second argument.\n",
                 "red"
             )
