@@ -1,3 +1,20 @@
+## 0.3.3
+
+* Error out gracefully if we attempt to verify a file that doesn't contain a
+  signature.
+
+## 0.3.2
+
+* Prettied up the CLI output with a few emojis and colours.
+
+## 0.3.1
+
+* Add tox to help get us to a point where Python 2.7 is supported
+* Fix a bug in the shebang in the CLI script and modify setup.py to use
+  `entry_points=` instead of `scripts=` as the latter method had a tendency to
+  overwrite the shebang line in the `aletheia` script.
+* Lastly, we now have Even More Tests.
+
 ## 0.3.0
 
 * Added clours to the output of the command-line script.  This means a new
