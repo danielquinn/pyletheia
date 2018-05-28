@@ -1,7 +1,7 @@
 import os
 
 from aletheia.file_types.base import File
-from aletheia.file_types import JpegFile, Mp3File
+from aletheia.file_types import JpegFile, Mp3File, Mp4File
 
 from ..base import TestCase
 
@@ -21,4 +21,7 @@ class FileTestCase(TestCase):
         )
 
     def test_get_subclasses(self):
-        self.assertEqual(set(File.get_subclasses()), {JpegFile, Mp3File})
+        self.assertEqual(
+            set(File.get_subclasses()),
+            {JpegFile, Mp3File, Mp4File}
+        )
