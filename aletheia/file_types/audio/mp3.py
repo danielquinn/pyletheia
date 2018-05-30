@@ -19,17 +19,17 @@ class Mp3File(FFMpegFile):
 
         payload = self.generate_payload(public_key_url, signature)
 
-        audio = ID3(self.source)
-        audio.add(TPUB(encoding=3, text=payload))
-        audio.save()
+        mp3 = ID3(self.source)
+        mp3.add(TPUB(encoding=3, text=payload))
+        mp3.save()
 
     def verify(self):
 
-        audio = ID3(self.source)
+        mp3 = ID3(self.source)
 
         try:
 
-            payload = json.loads(audio.get("TPUB")[0])
+            payload = json.loads(mp3.get("TPUB")[0])
 
             self.logger.debug("Found payload: %s", payload)
 
