@@ -1,31 +1,15 @@
 import json
-import subprocess
 
 from mutagen.id3 import ID3, TPUB
 
 from ...exceptions import UnparseableFileError
-from ..base import LargeFile
+from ..base import FFMpegFile
 
 
-class Mp3File(LargeFile):
+class Mp3File(FFMpegFile):
 
     SCHEMA_VERSION = 1
     SUPPORTED_TYPES = ("audio/mpeg",)
-
-    def get_raw_data(self):
-        return subprocess.Popen(
-            (
-                "ffmpeg",
-                "-i", self.source,
-                "-vn",
-                "-codec:a", "copy",
-                "-map_metadata", "-1",
-                "-f", "mp3",
-                "-"
-            ),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL
-        ).stdout
 
     def sign(self, private_key, public_key_url):
 

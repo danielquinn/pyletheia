@@ -16,6 +16,8 @@ class StackTestCase(TestCase):
         os.path.join(os.path.dirname(__file__), "data", "test.jpg")),
       "mp3": os.path.normpath(
         os.path.join(os.path.dirname(__file__), "data", "test.mp3")),
+      "mp4": os.path.normpath(
+        os.path.join(os.path.dirname(__file__), "data", "test.mp4")),
     }
 
     def __init__(self, *args):

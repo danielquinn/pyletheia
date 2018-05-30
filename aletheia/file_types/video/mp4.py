@@ -1,25 +1,15 @@
 import json
-import subprocess
 
 import mutagen
 
 from ...exceptions import UnparseableFileError
-from ..base import LargeFile
+from ..base import FFMpegFile
 
 
-class Mp4File(LargeFile):
+class Mp4File(FFMpegFile):
 
     SCHEMA_VERSION = 1
     SUPPORTED_TYPES = ("video/mp4",)
-
-    def get_raw_data(self):
-        with open(self.source, "rb") as f:
-            return subprocess.Popen(
-                ("exiftool", "-all=", "-"),
-                stdin=f,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.DEVNULL
-            ).stdout
 
     def sign(self, private_key, public_key_url):
 

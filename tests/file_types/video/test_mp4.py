@@ -17,7 +17,7 @@ class Mp4TestCase(TestCase):
         unsigned = os.path.join(self.DATA, "test.mp4")
         self.assertEqual(
             md5(Mp4File(unsigned, "").get_raw_data().read()).hexdigest(),
-            "1682fffecf5dfed2c01b4c521babc469"
+            "b9b28e4ac500be961bd07290a34cf93f"
         )
 
     def test_sign_from_path(self):

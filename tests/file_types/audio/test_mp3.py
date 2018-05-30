@@ -17,7 +17,7 @@ class Mp3TestCase(TestCase):
         unsigned = os.path.join(self.DATA, "test.mp3")
         self.assertEqual(
             md5(Mp3File(unsigned, "").get_raw_data().read()).hexdigest(),
-            "8311d858697187b9cac8536221b5591d"
+            "d41d8cd98f00b204e9800998ecf8427e"
         )
 
     def test_sign_from_path(self):
