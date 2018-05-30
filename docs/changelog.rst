@@ -3,6 +3,12 @@
 Changelog
 #########
 
+0.4.0
+=====
+* After some tinkering with a few alternatives, FFMpeg is now the standard way
+  to generate the "raw data" component for audio & video.
+* Support for MP4 files added.
+
 0.3.4
 =====
 
