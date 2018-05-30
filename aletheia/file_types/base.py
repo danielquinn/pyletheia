@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import urllib.parse
 
 import requests
@@ -245,3 +246,23 @@ class LargeFile(File):
             raise InvalidSignature()
 
         return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
+
+
+class FFMpegFile(LargeFile):
+    """
+    Large files that use FFMpeg to derive the raw data can subclass this since
+    the tactic is the same across formats.
+    """
+
+    def get_raw_data(self):
+        return subprocess.Popen(
+            (
+                "ffmpeg",
+                "-i", self.source,
+                "-loglevel", "error",
+                "-map", "0:v:0", "-c", "copy", "-f", "data", "-",
+                "-map", "0:a:0", "-c", "copy", "-f", "data", "-"
+            ),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
+        ).stdout
