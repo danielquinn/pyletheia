@@ -1,5 +1,0 @@
-.. _requirements:
-
-Requirements
-############
-

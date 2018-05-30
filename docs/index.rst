@@ -13,7 +13,6 @@ strictly to how Aletheia is implemented in Python.
 .. toctree::
    :maxdepth: 2
 
-   requirements
    setup
    commandline-api
    python-api
