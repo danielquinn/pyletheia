@@ -6,12 +6,14 @@
 
 import argparse
 import os
+import textwrap
 
 from cryptography.exceptions import InvalidSignature
 from termcolor import cprint
 
 from aletheia.aletheia import Aletheia
 from aletheia.exceptions import (
+    DependencyMissingError,
     InvalidURLError,
     PublicKeyNotExistsError,
     UnknownFileTypeError,
@@ -107,6 +109,11 @@ class Command:
                 "red"
             )
             return 2
+        except DependencyMissingError as e:
+            message = textwrap.fill(
+                str(e), initial_indent="  ", subsequent_indent="  ")
+            cprint(f"\n{message}\n", "red")
+            return 3
         template = "\n  ✔  {} was signed with your private key\n"
         cprint(template.format(args.path), "green")
 
@@ -150,6 +157,11 @@ class Command:
         except InvalidSignature:
             cprint("\n  There's something wrong with that file\n", "red")
             return 6
+        except DependencyMissingError as e:
+            message = textwrap.fill(
+                str(e), initial_indent="  ", subsequent_indent="  ")
+            cprint(f"\n{message}\n", "red")
+            return 7
 
         template = "\n  ✔  The file is verified as having originated at {}\n"
         cprint(template.format(domain), "green")

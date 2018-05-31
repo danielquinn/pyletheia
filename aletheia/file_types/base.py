@@ -17,6 +17,7 @@ from cryptography.hazmat.primitives.asymmetric import padding, utils
 
 from ..common import LoggingMixin
 from ..exceptions import (
+    DependencyMissingError,
     InvalidURLError,
     PublicKeyNotExistsError,
     UnknownFileTypeError
@@ -255,14 +256,27 @@ class FFMpegFile(LargeFile):
     """
 
     def get_raw_data(self):
-        return subprocess.Popen(
-            (
-                "ffmpeg",
-                "-i", self.source,
-                "-loglevel", "error",
-                "-map", "0:v:0", "-c", "copy", "-f", "data", "-",
-                "-map", "0:a:0", "-c", "copy", "-f", "data", "-"
-            ),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL
-        ).stdout
+        try:
+            return subprocess.Popen(
+                (
+                    "ffmpeg",
+                    "-i", self.source,
+                    "-loglevel", "error",
+                    "-map", "0:v:0", "-c", "copy", "-f", "data", "-",
+                    "-map", "0:a:0", "-c", "copy", "-f", "data", "-"
+                ),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL
+            ).stdout
+        except OSError as e:
+            if e.errno == os.errno.ENOENT:
+                raise DependencyMissingError(
+                    "Handling this file type requires a working installation "
+                    "of FFMpeg (https://ffmpeg.org/) and for the moment, "
+                    "Aletheia can't find one on this system.  If you're sure "
+                    "it's installed, make sure that it's callable from the "
+                    "PATH, and if it isn't installed, you can follow the "
+                    "instructions on the FFMpeg website for how to do that.  "
+                    "Don't worry, it's pretty easy."
+                )
+            raise

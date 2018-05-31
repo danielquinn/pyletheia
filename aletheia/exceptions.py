@@ -12,3 +12,7 @@ class PublicKeyNotExistsError(Exception):
 
 class UnparseableFileError(Exception):
     pass
+
+
+class DependencyMissingError(Exception):
+    pass
