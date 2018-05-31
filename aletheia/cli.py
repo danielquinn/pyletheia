@@ -86,7 +86,7 @@ class Command:
 
         if not args.url:
             cprint(
-                "\n  ✖️  You must specify the public key URL either in the "
+                "\n  You must specify the public key URL either in the "
                 "environment as \n  ALETHEIA_PUBLIC_KEY_URL or on the command "
                 "line as the second argument.\n",
                 "red"
@@ -97,13 +97,13 @@ class Command:
             sign(args.path, args.url)
         except FileNotFoundError:
             cprint(
-                "\n  ✖️  Aletheia can't find that file\n",
+                "\n  Aletheia can't find that file\n",
                 "red"
             )
             return 1
         except UnknownFileTypeError:
             cprint(
-                "\n  ✖️  Aletheia doesn't know how to sign that file type\n",
+                "\n  Aletheia doesn't know how to sign that file type\n",
                 "red"
             )
             return 2
@@ -119,36 +119,36 @@ class Command:
             domain = verify(args.path)
         except FileNotFoundError:
             cprint(
-                "\n  ✖️  Aletheia can't find that file\n",
+                "\n  Aletheia can't find that file\n",
                 "red"
             )
             return 1
         except UnknownFileTypeError:
             cprint(
-                "\n  ✖️  Aletheia doesn't recognise that file type\n",
+                "\n  Aletheia doesn't recognise that file type\n",
                 "red"
             )
             return 2
         except UnparseableFileError:
             cprint(
-                "\n  ✖️  Aletheia can't find a signature in that file\n",
+                "\n  Aletheia can't find a signature in that file\n",
                 "red"
             )
             return 3
         except InvalidURLError:
             cprint(
-                "\n  ✖️  The public key URL in the file provided is invalid\n",
+                "\n  The public key URL in the file provided is invalid\n",
                 "red"
             )
             return 4
         except PublicKeyNotExistsError:
             cprint(
-                "\n  ✖️  The specified URL does not contain a public key\n",
+                "\n  The specified URL does not contain a public key\n",
                 "red"
             )
             return 5
         except InvalidSignature:
-            cprint("\n  ✖️  There's something wrong with that file\n", "red")
+            cprint("\n  There's something wrong with that file\n", "red")
             return 6
 
         template = "\n  ✔  The file is verified as having originated at {}\n"
