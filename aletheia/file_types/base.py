@@ -30,7 +30,7 @@ class File(LoggingMixin):
 
     SCHEMA_VERSION = 1
 
-    def __init__(self, source, public_key_cache):
+    def __init__(self, source, public_key_cache: str):
         """
         :param source: Typically this will be a file path, but some modules may
                support other types as well.  See ``images.JpegFile`` for an
@@ -82,7 +82,7 @@ class File(LoggingMixin):
         """
         raise NotImplementedError()
 
-    def sign(self, private_key, public_key_url):
+    def sign(self, private_key, public_key_url: str) -> None:
         """
         Override this method to generate a signature from the raw data of your
         particular file format and write it to the metadata layer in the
@@ -97,20 +97,20 @@ class File(LoggingMixin):
         """
         raise NotImplementedError()
 
-    def verify(self):
+    def verify(self) -> str:
         """
         Attempt to verify the origin of a file by checking its local signature
         against the public key listed in the file.
-        :return: boolean  ``True`` if verified, `False`` if not.
+        :return: str  The domain from which the file originates.
         """
         raise NotImplementedError()
 
-    def generate_signature(self, private_key):
+    def generate_signature(self, private_key) -> str:
         """
         Use the private key to generate a signature from raw image data.
 
         :param private_key: The private key with which we sign the data.
-        :return: str A signature, encoded as base64
+        :return: str  A signature, encoded with hexlify
         """
         return binascii.hexlify(private_key.sign(
             self.get_raw_data(),
@@ -121,14 +121,14 @@ class File(LoggingMixin):
             hashes.SHA256()
         ))
 
-    def generate_payload(self, public_key_url, signature):
+    def generate_payload(self, public_key_url: str, signature: bytes):
         return json.dumps({
             "version": self.SCHEMA_VERSION,
             "public-key": public_key_url,
             "signature": signature.decode()
         }, separators=(",", ":"))
 
-    def verify_signature(self, key_url, signature):
+    def verify_signature(self, key_url: str, signature: bytes):
         """
         Use the public key (found either by fetching it online or pulling it
         from the local cache to verify the signature against the image data.
@@ -155,7 +155,7 @@ class File(LoggingMixin):
 
         return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
 
-    def _get_public_key(self, url):
+    def _get_public_key(self, url: str):
         """
         Attempt to fetch the public key from the local cache, and if it's not
         in there, fetch it from the internetz and put it in there.
