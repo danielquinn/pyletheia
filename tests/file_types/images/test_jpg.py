@@ -20,6 +20,13 @@ class JpegTestCase(TestCase):
             "cc96a1bff6c259f0534f191e83cfdf0e"
         )
 
+        signed = os.path.join(self.DATA, "test-signed.jpg")
+        self.assertEqual(
+            md5(JpegFile(signed, "").get_raw_data()).hexdigest(),
+            "cc96a1bff6c259f0534f191e83cfdf0e",
+            "Modifying the metadata should have no effect on the raw data"
+        )
+
     def test_sign(self):
 
         path = self.copy_for_work("test.jpg")

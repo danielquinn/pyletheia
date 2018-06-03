@@ -20,6 +20,13 @@ class Mp3TestCase(TestCase):
             "d41d8cd98f00b204e9800998ecf8427e"
         )
 
+        signed = os.path.join(self.DATA, "test-signed.mp3")
+        self.assertEqual(
+            md5(Mp3File(signed, "").get_raw_data().read()).hexdigest(),
+            "d41d8cd98f00b204e9800998ecf8427e",
+            "Modifying the metadata should have no effect on the raw data"
+        )
+
     def test_sign_from_path(self):
 
         path = self.copy_for_work("test.mp3")

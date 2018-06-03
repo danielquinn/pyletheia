@@ -6,7 +6,7 @@ from cryptography.exceptions import InvalidSignature
 import mutagen
 
 from aletheia.exceptions import UnparseableFileError
-from aletheia.file_types import Mp4File
+from aletheia.file_types.video.mp4 import Mp4File
 
 from ...base import TestCase
 
@@ -14,10 +14,18 @@ from ...base import TestCase
 class Mp4TestCase(TestCase):
 
     def test_get_raw_data_from_path(self):
+
         unsigned = os.path.join(self.DATA, "test.mp4")
         self.assertEqual(
             md5(Mp4File(unsigned, "").get_raw_data().read()).hexdigest(),
             "b9b28e4ac500be961bd07290a34cf93f"
+        )
+
+        signed = os.path.join(self.DATA, "test-signed.mp4")
+        self.assertEqual(
+            md5(Mp4File(signed, "").get_raw_data().read()).hexdigest(),
+            "b9b28e4ac500be961bd07290a34cf93f",
+            "Modifying the metadata should have no effect on the raw data"
         )
 
     def test_sign_from_path(self):
@@ -27,7 +35,7 @@ class Mp4TestCase(TestCase):
         f = Mp4File(path, "")
         f.generate_signature = mock.Mock(return_value="signature")
         f.generate_payload = mock.Mock(return_value="payload")
-        f.sign(None, None)
+        f.sign(None, "")
 
         mp4 = mutagen.File(path)
         self.assertEqual(mp4["\xa9too"], ["payload"])
