@@ -20,6 +20,12 @@ class FileTestCase(TestCase):
             Mp3File
         )
 
+    def test_build_mp4(self):
+        self.assertIsInstance(
+            File.build(os.path.join(self.DATA, "test.mp4"), self.SCRATCH),
+            Mp4File
+        )
+
     def test_get_subclasses(self):
         self.assertEqual(
             set(File.get_subclasses()),
