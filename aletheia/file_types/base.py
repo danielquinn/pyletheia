@@ -197,7 +197,7 @@ class LargeFile(File):
     different so we don't end up busting our RAM limits.
     """
 
-    def generate_signature(self, private_key):
+    def generate_signature(self, private_key) -> bytes:
 
         block_size = 16 * 1024
         raw_data = self.get_raw_data()
