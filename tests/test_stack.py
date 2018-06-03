@@ -11,17 +11,10 @@ from .base import TestCase
 
 class StackTestCase(TestCase):
 
-    TEST_FILES = {
-      "jpg": os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "data", "test.jpg")),
-      "mp3": os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "data", "test.mp3")),
-      "mp4": os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "data", "test.mp4")),
-    }
+    TEST_FILES = ("jpg", "mp3", "mp4")
 
     def __init__(self, *args):
-        super(StackTestCase, self).__init__(*args)
+        super().__init__(*args)
         logging.basicConfig(level=logging.DEBUG)
 
     @patch.dict("os.environ", {"HOME": TestCase.SCRATCH})
@@ -57,11 +50,15 @@ class StackTestCase(TestCase):
         self.assertTrue(
             os.path.exists(os.path.join(self.SCRATCH, "aletheia.pub")))
 
-        for suffix, source_path in self.TEST_FILES.items():
+        for suffix in self.TEST_FILES:
+
+            filename = "test.{}".format(suffix)
+            source_path = os.path.normpath(
+                os.path.join(os.path.dirname(__file__), "data", filename))
 
             # Copy our test file to SCRATCH so we can fiddle with it
 
-            file_path = os.path.join(self.SCRATCH, "test.{}".format(suffix))
+            file_path = os.path.join(self.SCRATCH, filename)
             shutil.copyfile(source_path, file_path)
 
             # Sign the file
