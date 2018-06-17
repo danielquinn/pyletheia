@@ -33,8 +33,8 @@ As this is a Python package, use ``pip``:
 
     $ pip install aletheia
 
-Support for MP3 files requires that you have `FFmpeg`_ installed.  There are
-versions available for Linux, Mac, and Windows.
+Additionally, support for MP3 & MP4 files requires that you have `FFmpeg`_
+installed.  There are versions available for Linux, Mac, and Windows.
 
 .. _FFmpeg: https://ffmpeg.org/
 
