@@ -11,7 +11,7 @@ from .base import TestCase
 
 class StackTestCase(TestCase):
 
-    TEST_FILES = ("jpg", "mp3", "mp4")
+    TEST_FILES = ("html", "jpg", "mp3", "mp4")
 
     def __init__(self, *args):
         super().__init__(*args)

@@ -1,12 +1,18 @@
 import os
 
 from aletheia.file_types.base import File
-from aletheia.file_types import JpegFile, Mp3File, Mp4File
+from aletheia.file_types import HtmlFile, JpegFile, Mp3File, Mp4File
 
 from ..base import TestCase
 
 
 class FileTestCase(TestCase):
+
+    def test_build_html(self):
+        self.assertIsInstance(
+            File.build(os.path.join(self.DATA, "test.html"), self.SCRATCH),
+            HtmlFile
+        )
 
     def test_build_jpg(self):
         self.assertIsInstance(
@@ -29,5 +35,5 @@ class FileTestCase(TestCase):
     def test_get_subclasses(self):
         self.assertEqual(
             set(File.get_subclasses()),
-            {JpegFile, Mp3File, Mp4File}
+            {HtmlFile, JpegFile, Mp3File, Mp4File}
         )
