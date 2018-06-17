@@ -33,7 +33,7 @@ setup(
     license="AGPLv3",
     description="A Python implementation of Aletheia",
     long_description=description,
-    url="https://github.com/danielquinn/pyletheia",
+    url="https://danielquinn.github.io/aletheia",
     download_url="https://github.com/danielquinn/pyletheia",
     author="Daniel Quinn",
     author_email="code@danielquinn.org",
