@@ -106,7 +106,7 @@ class File(LoggingMixin):
         """
         raise NotImplementedError()
 
-    def generate_signature(self, private_key) -> str:
+    def generate_signature(self, private_key) -> bytes:
         """
         Use the private key to generate a signature from raw image data.
 

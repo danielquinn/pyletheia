@@ -11,11 +11,11 @@ class JpegFile(File):
 
     SUPPORTED_TYPES = ("image/jpeg",)
 
-    def get_raw_data(self):
+    def get_raw_data(self) -> bytes:
         with PIL.Image.open(self.source) as im:
             return im.tobytes()
 
-    def sign(self, private_key, public_key_url):
+    def sign(self, private_key, public_key_url: str) -> None:
         """
         Use Pillow to capture the raw image data, generate a signature from it,
         and then use piexif to write said signature + where to find the public
@@ -37,7 +37,7 @@ class JpegFile(File):
         exif["0th"][piexif.ImageIFD.HostComputer] = payload
         piexif.insert(piexif.dump(exif), self.source)
 
-    def verify(self):
+    def verify(self) -> str:
         """
         Attempt to verify the origin of an image by checking its local
         signature against the public key listed in the file.
