@@ -8,12 +8,12 @@ import urllib.parse
 
 import requests
 import six
-
-import magic
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, utils
+
+import magic
 
 from ..common import LoggingMixin
 from ..exceptions import (
@@ -62,7 +62,7 @@ class File(LoggingMixin):
         :return: An instance of the relevant File subclass
         """
 
-        mimetype = magic.from_file(path, mime=True)
+        mimetype = cls._guess_mimetype(path)
         for klass in cls.get_subclasses():
             if mimetype in klass.SUPPORTED_TYPES:
                 return klass(path, public_key_cache)
@@ -189,6 +189,38 @@ class File(LoggingMixin):
                 return self._get_public_key(url)
 
         raise PublicKeyNotExistsError()
+
+    @staticmethod
+    def _guess_mimetype(path) -> str:
+        """
+        We use the magic module to get this value, but if that returns a type
+        that doesn't mean anything to us, we fall back to guessing based on the
+        file suffix.
+        """
+
+        ambiguous_mimetypes = (
+            "text/plain",
+            "application/octet-stream"
+        )
+
+        guessed = magic.from_file(path, mime=True)
+        if guessed not in ambiguous_mimetypes:
+            return guessed
+
+        return {
+            "jpg": "image/jpeg",
+            "jpeg": "image/jpeg",
+            "gif": "image/gif",
+            "png": "image/png",
+            "mp3": "audio/mp3",
+            "mp4": "video/mp4",
+            "htm": "text/html",
+            "html": "text/html",
+            "md": "text/markdown",
+            "mkv": "video/x-matroska",
+            "ogv": "video/ogg",
+            "webm": "video/webm",
+        }.get(path.split(".")[-1].lower(), guessed)
 
 
 class LargeFile(File):
