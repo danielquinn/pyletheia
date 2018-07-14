@@ -46,7 +46,6 @@ setup(
         "piexif>=1.0.13",
         "python-magic>=0.4.15",
         "requests>=2.18.4",
-        "six",
         "termcolor>=1.1.0",
     ],
     tests_require=[

@@ -10,7 +10,6 @@ import urllib.parse
 
 import magic
 import requests
-import six
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -42,7 +41,7 @@ class File(LoggingMixin):
                public keys that have been downloaded for use in verification.
         """
 
-        if isinstance(source, six.string_types):
+        if isinstance(source, str):
             if not os.path.exists(source):
                 raise FileNotFoundError(
                     "Can't find the file you want to sign/verify: {}".format(
