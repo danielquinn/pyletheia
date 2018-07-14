@@ -1,7 +1,7 @@
-from ..base import FFMpegFile
+from ..base import FFmpegFile
 
 
-class Mp4File(FFMpegFile):
+class Mp4File(FFmpegFile):
 
     SUPPORTED_TYPES = ("video/mp4",)
 

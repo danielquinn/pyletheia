@@ -5,7 +5,7 @@ Changelog
 
 0.5.0
 =====
-* We now make use of ffmpeg's hashing features rather than trying to determine
+* We now make use of FFmpeg's hashing features rather than trying to determine
   a "safe" way of drawing out the raw data from a file.
 * Support for MKV files added.
 * Support for Webm files added.
@@ -14,7 +14,7 @@ Changelog
 
 0.4.0
 =====
-* After some tinkering with a few alternatives, FFMpeg is now the standard way
+* After some tinkering with a few alternatives, FFmpeg is now the standard way
   to generate the "raw data" component for audio & video.
 * Support for MP4 files added.
 

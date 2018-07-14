@@ -1,7 +1,7 @@
-from ..base import FFMpegFile
+from ..base import FFmpegFile
 
 
-class WebmFile(FFMpegFile):
+class WebmFile(FFmpegFile):
 
     SUPPORTED_TYPES = ("video/webm",)
 

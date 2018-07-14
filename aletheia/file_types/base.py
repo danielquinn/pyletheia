@@ -282,9 +282,9 @@ class LargeFile(File):
         return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
 
 
-class FFMpegFile(File):
+class FFmpegFile(File):
     """
-    Large files that use FFMpeg to derive the raw data can subclass this since
+    Large files that use FFmpeg to derive the raw data can subclass this since
     the tactic is the same across formats.
     """
 
@@ -313,11 +313,11 @@ class FFMpegFile(File):
             if e.errno == os.errno.ENOENT:
                 raise DependencyMissingError(
                     "Handling this file type requires a working installation "
-                    "of FFMpeg (https://ffmpeg.org/) and for the moment, "
+                    "of FFmpeg (https://ffmpeg.org/) and for the moment, "
                     "Aletheia can't find one on this system.  If you're sure "
                     "it's installed, make sure that it's callable from the "
                     "PATH, and if it isn't installed, you can follow the "
-                    "instructions on the FFMpeg website for how to do that.  "
+                    "instructions on the FFmpeg website for how to do that.  "
                     "Don't worry, it's pretty easy."
                 )
             raise

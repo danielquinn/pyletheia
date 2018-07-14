@@ -1,7 +1,7 @@
-from ..base import FFMpegFile
+from ..base import FFmpegFile
 
 
-class MkvFile(FFMpegFile):
+class MkvFile(FFmpegFile):
 
     SUPPORTED_TYPES = ("video/x-matroska",)
 
