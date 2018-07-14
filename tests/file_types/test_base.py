@@ -1,7 +1,12 @@
 import os
 
+from aletheia.file_types import (
+    HtmlFile,
+    JpegFile,
+    Mp3File,
+    Mp4File,
+)
 from aletheia.file_types.base import File
-from aletheia.file_types import HtmlFile, JpegFile, Mp3File, Mp4File
 
 from ..base import TestCase
 

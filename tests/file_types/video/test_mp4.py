@@ -1,9 +1,9 @@
 import os
+import subprocess
 from hashlib import md5
 from unittest import mock
 
 from cryptography.exceptions import InvalidSignature
-import mutagen
 
 from aletheia.exceptions import UnparseableFileError
 from aletheia.file_types.video.mp4 import Mp4File
@@ -17,14 +17,14 @@ class Mp4TestCase(TestCase):
 
         unsigned = os.path.join(self.DATA, "test.mp4")
         self.assertEqual(
-            md5(Mp4File(unsigned, "").get_raw_data().read()).hexdigest(),
-            "b9b28e4ac500be961bd07290a34cf93f"
+            md5(Mp4File(unsigned, "").get_raw_data()).hexdigest(),
+            "697bc4588af4bde036171f724175e3e0"
         )
 
         signed = os.path.join(self.DATA, "test-signed.mp4")
         self.assertEqual(
-            md5(Mp4File(signed, "").get_raw_data().read()).hexdigest(),
-            "b9b28e4ac500be961bd07290a34cf93f",
+            md5(Mp4File(signed, "").get_raw_data()).hexdigest(),
+            "697bc4588af4bde036171f724175e3e0",
             "Modifying the metadata should have no effect on the raw data"
         )
 
@@ -37,8 +37,18 @@ class Mp4TestCase(TestCase):
         f.generate_payload = mock.Mock(return_value="payload")
         f.sign(None, "")
 
-        mp4 = mutagen.File(path)
-        self.assertEqual(mp4["\xa9too"], ["payload"])
+        metadata = subprocess.Popen(
+            (
+                "ffmpeg",
+                "-i", path,
+                "-loglevel", "error",
+                "-f", "ffmetadata", "-",
+            ),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
+        ).stdout.read()
+
+        self.assertIn(b"comment=payload", metadata)
 
     def test_verify_from_path_no_signature(self):
 

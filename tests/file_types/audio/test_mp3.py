@@ -1,12 +1,12 @@
 import os
+import subprocess
 from hashlib import md5
 from unittest import mock
 
 from cryptography.exceptions import InvalidSignature
-from mutagen.id3 import ID3
 
 from aletheia.exceptions import UnparseableFileError
-from aletheia.file_types import Mp3File
+from aletheia.file_types.audio.mp3 import Mp3File
 
 from ...base import TestCase
 
@@ -14,16 +14,17 @@ from ...base import TestCase
 class Mp3TestCase(TestCase):
 
     def test_get_raw_data_from_path(self):
+
         unsigned = os.path.join(self.DATA, "test.mp3")
         self.assertEqual(
-            md5(Mp3File(unsigned, "").get_raw_data().read()).hexdigest(),
-            "d41d8cd98f00b204e9800998ecf8427e"
+            md5(Mp3File(unsigned, "").get_raw_data()).hexdigest(),
+            "660bcb022b1068e6cb6cb101f7e40fd3"
         )
 
         signed = os.path.join(self.DATA, "test-signed.mp3")
         self.assertEqual(
-            md5(Mp3File(signed, "").get_raw_data().read()).hexdigest(),
-            "d41d8cd98f00b204e9800998ecf8427e",
+            md5(Mp3File(signed, "").get_raw_data()).hexdigest(),
+            "660bcb022b1068e6cb6cb101f7e40fd3",
             "Modifying the metadata should have no effect on the raw data"
         )
 
@@ -34,10 +35,20 @@ class Mp3TestCase(TestCase):
         f = Mp3File(path, "")
         f.generate_signature = mock.Mock(return_value="signature")
         f.generate_payload = mock.Mock(return_value="payload")
-        f.sign(None, None)
+        f.sign(None, "")
 
-        audio = ID3(path)
-        self.assertEqual(audio["TPUB"], ["payload"])
+        metadata = subprocess.Popen(
+            (
+                "ffmpeg",
+                "-i", path,
+                "-loglevel", "error",
+                "-f", "ffmetadata", "-",
+            ),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
+        ).stdout.read()
+
+        self.assertIn(b"ALETHEIA=payload", metadata)
 
     def test_verify_from_path_no_signature(self):
 
