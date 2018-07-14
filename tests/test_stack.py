@@ -1,21 +1,20 @@
 import os
-import logging
 import shutil
-
 from hashlib import sha512
 from unittest.mock import patch
 
 from aletheia.aletheia import Aletheia
+
 from .base import TestCase
 
 
 class StackTestCase(TestCase):
+    """
+    Test the entire stack: key generation, and the signing/verifying of every
+    file type.
+    """
 
-    TEST_FILES = ("html", "jpg", "mp3", "mp4")
-
-    def __init__(self, *args):
-        super().__init__(*args)
-        logging.basicConfig(level=logging.DEBUG)
+    TEST_FILES = ("html", "jpg", "mkv", "mp3", "mp4", "webm")
 
     @patch.dict("os.environ", {"HOME": TestCase.SCRATCH})
     @patch.dict("os.environ", {"ALETHEIA_HOME": TestCase.SCRATCH})

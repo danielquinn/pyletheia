@@ -3,8 +3,10 @@ import os
 from aletheia.file_types import (
     HtmlFile,
     JpegFile,
+    MkvFile,
     Mp3File,
     Mp4File,
+    WebmFile
 )
 from aletheia.file_types.base import File
 
@@ -40,5 +42,5 @@ class FileTestCase(TestCase):
     def test_get_subclasses(self):
         self.assertEqual(
             set(File.get_subclasses()),
-            {HtmlFile, JpegFile, Mp3File, Mp4File}
+            {HtmlFile, JpegFile, MkvFile, Mp3File, Mp4File, WebmFile}
         )

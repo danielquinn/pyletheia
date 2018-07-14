@@ -1,9 +1,9 @@
-from ..base import LargeFile
+from ..base import FFMpegFile
 
 
-class MkvFile(LargeFile):
-    """
-    This is a placeholder.  If you feel like helping out, this would be an
-    awesome place to start :-)
-    """
-    pass
+class MkvFile(FFMpegFile):
+
+    SUPPORTED_TYPES = ("video/x-matroska",)
+
+    def _get_suffix(self) -> str:
+        return "mkv"

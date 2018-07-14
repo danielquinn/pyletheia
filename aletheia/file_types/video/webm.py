@@ -1,9 +1,9 @@
-from ..base import LargeFile
+from ..base import FFMpegFile
 
 
-class WebmFile(LargeFile):
-    """
-    This is a placeholder.  If you feel like helping out, this would be an
-    awesome place to start :-)
-    """
-    pass
+class WebmFile(FFMpegFile):
+
+    SUPPORTED_TYPES = ("video/webm",)
+
+    def _get_suffix(self) -> str:
+        return "webm"
