@@ -10,6 +10,11 @@ strictly to how Aletheia is implemented in Python.
 .. _Aletheia: https://danielquinn.github.io/aletheia
 .. _Aletheia whitepaper: https://danielquinn.github.io/aletheia/whitepaper
 
+So!  You've got some files that you want to attach your name & reputation to,
+or maybe you've got some files that claim to be from someone and you just want
+to confirm that.  Either way, Aletheia can help you out.
+
+
 .. toctree::
    :maxdepth: 2
 
@@ -19,11 +24,3 @@ strictly to how Aletheia is implemented in Python.
    extending
    troubleshooting
    changelog
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
