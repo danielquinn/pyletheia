@@ -3,7 +3,7 @@
 Changelog
 #########
 
-0.5.0
+0.6.0
 =====
 * We now make use of FFmpeg's hashing features rather than trying to determine
   a "safe" way of drawing out the raw data from a file.
@@ -11,6 +11,10 @@ Changelog
 * Support for Webm files added.
 * The means of determining file type now includes support for guessing from
   file suffixes.
+
+0.5.0
+=====
+* Support for HTML files added.
 
 0.4.0
 =====
