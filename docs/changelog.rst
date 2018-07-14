@@ -3,6 +3,15 @@
 Changelog
 #########
 
+0.5.0
+=====
+* We now make use of ffmpeg's hashing features rather than trying to determine
+  a "safe" way of drawing out the raw data from a file.
+* Support for MKV files added.
+* Support for Webm files added.
+* The means of determining file type now includes support for guessing from
+  file suffixes.
+
 0.4.0
 =====
 * After some tinkering with a few alternatives, FFMpeg is now the standard way
