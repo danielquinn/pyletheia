@@ -3,9 +3,12 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
+import tempfile
 import urllib.parse
 
+import magic
 import requests
 import six
 from cryptography.exceptions import InvalidSignature
@@ -13,14 +16,13 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, utils
 
-import magic
-
 from ..common import LoggingMixin
 from ..exceptions import (
     DependencyMissingError,
     InvalidURLError,
     PublicKeyNotExistsError,
-    UnknownFileTypeError
+    UnknownFileTypeError,
+    UnparseableFileError
 )
 
 
@@ -281,25 +283,33 @@ class LargeFile(File):
         return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
 
 
-class FFMpegFile(LargeFile):
+class FFMpegFile(File):
     """
     Large files that use FFMpeg to derive the raw data can subclass this since
     the tactic is the same across formats.
     """
 
-    def get_raw_data(self):
+    def get_raw_data(self) -> bytes:
+        """
+        Strictly speaking, this isn't the "raw data" but rather a hash of it,
+        this is due to the fact that ffmpeg is crazy-powerful and can do
+        hashing of Very Large Files internally.  It also doesn't make accessing
+        the raw data particularly easy from version to version, so this is the
+        best I think we can get.
+        """
+
         try:
             return subprocess.Popen(
                 (
                     "ffmpeg",
-                    "-i", self.source,
                     "-loglevel", "error",
-                    "-map", "0:v:0", "-c", "copy", "-f", "data", "-",
-                    "-map", "0:a:0", "-c", "copy", "-f", "data", "-"
+                    "-i", self.source,
+                    "-f", "hash",
+                    "-hash", "sha512", "-"
                 ),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL
-            ).stdout
+            ).stdout.read().decode().strip().split("=")[1].encode()
         except OSError as e:
             if e.errno == os.errno.ENOENT:
                 raise DependencyMissingError(
@@ -312,3 +322,74 @@ class FFMpegFile(LargeFile):
                     "Don't worry, it's pretty easy."
                 )
             raise
+
+    def sign(self, private_key, public_key_url) -> None:
+
+        signature = self.generate_signature(private_key)
+
+        self.logger.debug("Signature generated: %s", signature)
+
+        payload = self.generate_payload(public_key_url, signature)
+        scratch = os.path.join(
+            tempfile.mkdtemp(prefix="aletheia-"),
+            "scratch.{}".format(self._get_suffix())
+        )
+
+        subprocess.call((
+            "ffmpeg",
+            "-i", self.source,
+            "-loglevel", "error",
+            "-metadata", "{}={}".format(self._get_metadata_key(), payload),
+            "-codec", "copy", scratch
+        ))
+        shutil.move(scratch, self.source)
+        shutil.rmtree(os.path.dirname(scratch))
+
+    def verify(self) -> str:
+
+        try:
+
+            payload = self._get_payload()
+
+            self.logger.debug("Found payload: %s", payload)
+
+            key_url = payload["public-key"]
+            signature = payload["signature"]
+
+        except (ValueError, TypeError, IndexError, json.JSONDecodeError):
+            self.logger.error("Invalid format, or no signature found")
+            raise UnparseableFileError()
+
+        return self.verify_signature(key_url, signature)
+
+    def _get_suffix(self) -> str:
+        raise NotImplementedError
+
+    def _get_metadata_key(self) -> str:
+        """
+        Override this if the format in question has specific rules about the
+        keys used in metadata.  See multimedia.cx for more information:
+          https://wiki.multimedia.cx/index.php/FFmpeg_Metadata
+        """
+        return "ALETHEIA"
+
+    def _get_payload(self) -> dict:
+
+        metadata = subprocess.Popen(
+            (
+                "ffmpeg",
+                "-i", self.source,
+                "-loglevel", "error",
+                "-f", "ffmetadata", "-",
+            ),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
+        ).stdout
+
+        needle = "{}=".format(self._get_metadata_key())
+        for line in metadata.readlines():
+            line = line.decode()
+            if line.startswith(needle):
+                return json.loads(line.split("=", 1)[-1])
+
+        raise IndexError()  # Will be caught in .verify()
