@@ -1,6 +1,6 @@
 pyletheia
 =========
-|PyPi| |Thanks!| |License|
+|PyPi| |Thanks!| |License| |Documentation|
 
 A Python implementation of `Aletheia`_.
 
@@ -11,162 +11,43 @@ A Python implementation of `Aletheia`_.
    :target: https://github.com/danielquinn/pyletheia/blob/master/THANKS.md
 .. |License| image:: https://img.shields.io/github/license/danielquinn/pyletheia.svg
    :target: https://github.com/danielquinn/pyletheia/blob/master/LICENSE
+.. |Documentation| image:: https://readthedocs.org/projects/aletheia-project/badge/?version=latest
+   :target: https://aletheia-project.readthedocs.io/en/latest/
 
+This is how we get from
 
-Process
--------
+    I read it on the Internet, so it must be true.
 
-The process is pretty simple:
+to
 
-1. Generate a public/private key pair
-2. Sign a media file (image, audio, video) with the private key
-3. Publish your public key
-4. People can now verify your media files with your public key
+    Yesterday, the Guardian had a story about a prominent politician doing
+    something they weren't supposed to be doing.  The video footage was
+    certified authentic, and the author of the article stands by her work.
 
+Aletheia is a little program you run to attach your name -- and reputation --
+to the files you create: audio, video, and documentation, all of it can carry
+authorship, guaranteed to be tamper proof.
 
-Installation
-------------
+Once you use Aletheia to sign your files, you can share them all over the web,
+and all someone has to do to verify the file's author is run Aletheia against
+the file they just received.  The complication of fetching public keys and
+verifying signatures is all done for you.
 
-As this is a Python package, use ``pip``:
+If this sounds interesting to you, have a look at `the documentation`_ or even
+install it and try it out yourself.
 
-.. code:: bash
+.. _the documentation: https://aletheia-project.readthedocs.io/en/latest/
 
-    $ pip install aletheia
 
-Additionally, support for MP3 & MP4 files requires that you have `FFmpeg`_
-installed.  There are versions available for Linux, Mac, and Windows.
+The Goal
+--------
 
-.. _FFmpeg: https://ffmpeg.org/
+I want to live in a world where journalism means something again.  Where "some
+guy on the internet" making unsubstantiated claims can be fact-checked by
+organisations who have a reputation for doing the work of accurate reporting.
+More importantly though, I think we need a way to be able to trust what we see
+again.
 
-
-Configuration
--------------
-
-Aletheia puts all of the required key files and cached public keys into
-``${ALETHEIA_HOME}`` which by default is ``${HOME}/.config/aletheia``.  You
-can override this by setting it in the environment.
-
-
-Command Line
-------------
-
-This package comes with a simple command-line program that does everything you
-need to support the Aletheia process.
-
-
-Generate your public/private key pair
-.....................................
-
-.. code:: bash
-
-    $ aletheia generate
-
-      🔑  Generating private/public key pair...
-
-      All finished!
-
-      You now have two files: aletheia.pem (your private key) and
-      aletheia.pub (your public key).  Keep the former private, and share
-      the latter far-and-wide.  Importantly, place your public key at a
-      publicly accessible URL so that when you sign a file with your
-      private key, it can be verified by reading the public key at that
-      URL.
-
-Your public & private key will be stored in ``${ALETHEIA_HOME}``. For Aletheia
-to work, you need to publish your public key on a website somewhere so it can
-be used to verify files later.
-
-
-Sign an image with your private key
-...................................
-
-.. code:: bash
-
-    $ aletheia sign file.jpg https://example.com/my-public-key.pub
-
-      ✔  file.jpg was signed with your private key
-
-Aletheia will modify the EXIF data on your image to include a signature and a
-link to where your public key can be found so when it comes time to verify it,
-everything that's necessary is available.
-
-
-Verify the image with your public key
-.....................................
-
-.. code:: bash
-
-    $ aletheia verify file.jpg
-
-      ✔  The file is verified as having originated at example.com
-
-Now, anyone who receives your image can verify its origin with this command so
-long as your public key remains available at the URL you used above.
-
-
-Python API
-----------
-
-There's no reason that you would have to do all this on the command line of
-course.  All of the above can be done programmatically as well.
-
-
-Generate your public/private key pair
-.....................................
-
-.. code:: python
-
-    from aletheia.utils import generate
-
-    generate()
-
-Just like the command line utility, ``generate()`` will create your
-public/private key pair in ``${ALETHEIA_HOME}``.
-
-
-Sign an image with your private key
-...................................
-
-.. code:: python
-
-    from aletheia.utils import sign
-
-    sign("/path/to/file.jpg", "https://example.com/my-public-key.pub")
-
-So long as you've got your public/private key pair in ``${ALETHEIA_HOME}``,
-``sign()`` will modify the metadata on your file to include a signature and URL
-for your public key.
-
-There is also a ``sign_bulk()`` utility for multiple files:
-
-.. code:: python
-
-    from aletheia.utils import sign
-
-    sign(
-        ("/path/to/file1.jpg", "/path/to/file2.jpg"),
-        "https://example.com/my-public-key.pub"
-    )
-
-
-Verify the image with your public key
-.....................................
-
-.. code:: python
-
-    from aletheia.utils import verify
-
-    verify("/path/to/file.jpg")
-
-Aletheia will import the public key from the URL in the file's metadata and
-attempt to verify the image data by comparing the key to the embedded
-signature.  If the file is verified, it returns ``True``, otherwise it returns
-``False``.
-
-There's also a ``verify_bulk()`` utility for multiple files:
-
-.. code:: python
-
-    from aletheia.utils import verify
-
-    verify_bulk(("/path/to/file1.jpg", "/path/to/file2.jpg"))
+New technologies are evolving every day that allow better and better fakes to
+be created.  Now more than ever we need a way to figure out whether we trust
+the source of something we're seeing.  This is an attempt to do that.
