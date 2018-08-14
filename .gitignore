@@ -97,5 +97,7 @@ ENV/
 # mkdocs documentation
 /site
 
-# mypy
+# caches
 .mypy_cache/
+.pytest_cache/
+
