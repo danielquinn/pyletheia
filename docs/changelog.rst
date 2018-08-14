@@ -12,9 +12,11 @@ Changelog
 * The means of determining file type now includes support for guessing from
   file suffixes.
 
+
 0.5.0
 =====
 * Support for HTML files added.
+
 
 0.4.0
 =====
@@ -22,10 +24,12 @@ Changelog
   to generate the "raw data" component for audio & video.
 * Support for MP4 files added.
 
+
 0.3.4
 =====
 
 * Fix a bug in environment variable referencing for public key URL.
+
 
 0.3.3
 =====
@@ -33,10 +37,12 @@ Changelog
 * Error out gracefully if we attempt to verify a file that doesn't contain a
   signature.
 
+
 0.3.2
 =====
 
 * Prettied up the CLI output with a few emojis and colours.
+
 
 0.3.1
 =====
@@ -46,6 +52,7 @@ Changelog
   ``entry_points=`` instead of ``scripts=`` as the latter method had a tendency
   to overwrite the shebang line in the ``aletheia`` script.
 * Lastly, we now have Even More Tests.
+
 
 0.3.0
 =====
@@ -58,6 +65,7 @@ Changelog
 * The command-line script is a lot more helpful now in terms of error
   messages.
 
+
 0.2.0
 =====
 
@@ -65,6 +73,7 @@ Changelog
   the overhead less-than-awesome.  Signing image files can still be done the
   standard way though: by operating on the file rather than the PIL object.
 * More tests!
+
 
 0.1.0
 =====
@@ -75,6 +84,7 @@ Changelog
 * Location of the signature data in JPEG images was moved to
   ``ImageIFD.HostComputer``.
 * Dropped pyexiv2 and added mutagen & piexif as dependencies.
+
 
 0.0.3
 =====
