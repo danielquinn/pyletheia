@@ -9,6 +9,7 @@ Changelog
   performance are the same, but file-magic appears to be more commonly used in
   different Linux distros and I'd like for packaging to be as easily as
   possible.
+* Added tox tests for Python 3.7
 
 .. _file-magic: https://pypi.org/project/file-magic/
 .. _python-magic: https://pypi.org/project/python-magic/
