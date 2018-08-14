@@ -194,9 +194,9 @@ class File(LoggingMixin):
     @staticmethod
     def _guess_mimetype(path) -> str:
         """
-        We use the magic module to get this value, but if that returns a type
-        that doesn't mean anything to us, we fall back to guessing based on the
-        file suffix.
+        We use the file-magic module to get this value, but if that returns a
+        type that doesn't mean anything to us, we fall back to guessing based
+        on the file suffix.
         """
 
         ambiguous_mimetypes = (
@@ -204,7 +204,7 @@ class File(LoggingMixin):
             "application/octet-stream"
         )
 
-        guessed = magic.from_file(path, mime=True)
+        guessed = magic.detect_from_filename(path).mime_type
         if guessed not in ambiguous_mimetypes:
             return guessed
 
