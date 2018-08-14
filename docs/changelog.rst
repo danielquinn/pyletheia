@@ -3,6 +3,17 @@
 Changelog
 #########
 
+0.6.1
+=====
+* Switched to using `file-magic`_ instead of `python-magic`_.  The effects &
+  performance are the same, but file-magic appears to be more commonly used in
+  different Linux distros and I'd like for packaging to be as easily as
+  possible.
+
+.. _file-magic: https://pypi.org/project/file-magic/
+.. _python-magic: https://pypi.org/project/python-magic/
+
+
 0.6.0
 =====
 * We now make use of FFmpeg's hashing features rather than trying to determine
