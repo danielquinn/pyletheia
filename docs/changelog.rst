@@ -3,6 +3,12 @@
 Changelog
 #########
 
+0.6.2
+=====
+* Added support for python 3.5.  Aletheia now supports CPython 3.5, 3.6, 3.7,
+  and PyPy 3.5 v6.0.0
+
+
 0.6.1
 =====
 * Switched to using `file-magic`_ instead of `python-magic`_.  The effects &
