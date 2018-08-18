@@ -14,6 +14,7 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, utils
+from collections import OrderedDict
 
 from ..common import LoggingMixin
 from ..exceptions import (
@@ -124,11 +125,18 @@ class File(LoggingMixin):
         ))
 
     def generate_payload(self, public_key_url: str, signature: bytes):
-        return json.dumps({
-            "version": self.SCHEMA_VERSION,
-            "public-key": public_key_url,
-            "signature": signature.decode()
-        }, separators=(",", ":"))
+        """
+        Dictionaries are unordered in Python 3.5 and earlier, so to make sure
+        the payload is generated in a predictable fashion, we have to use an
+        OrderedDict here.
+        """
+
+        r = OrderedDict()
+        r["version"] = self.SCHEMA_VERSION
+        r["public-key"] = public_key_url
+        r["signature"] = signature.decode()
+
+        return json.dumps(r, separators=(",", ":"))
 
     def verify_signature(self, key_url: str, signature: bytes):
         """
