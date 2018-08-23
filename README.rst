@@ -2,7 +2,7 @@ pyletheia
 =========
 |PyPi| |Thanks!| |License| |Documentation|
 
-A Python implementation of `Aletheia`_.
+A Python 3 implementation of `Aletheia`_.
 
 .. _Aletheia: https://github.com/danielquinn/aletheia
 .. |PyPi| image:: https://img.shields.io/pypi/v/aletheia.svg
