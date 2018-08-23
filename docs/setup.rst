@@ -39,9 +39,10 @@ Python
 
 Aletheia was written for modern versions of Python, so you'll need Python 3.5
 or higher to get things running.  If you're stuck using a system without a
-modern version available, [the pyenv project](https://github.com/pyenv/pyenv)
-provides a handy means of getting modern python on any system that can run
-Bash.
+modern version available, `the pyenv project`_ provides a handy means of
+getting modern python on any system that can run Bash.
+
+.. _the pyenv project: https://github.com/pyenv/pyenv
 
 
 .. _setup-installation:
