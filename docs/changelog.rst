@@ -5,16 +5,17 @@ Changelog
 
 0.6.2
 =====
-* Added support for python 3.5.  Aletheia now supports CPython 3.5, 3.6, 3.7,
+
+* Added support for Python 3.5.  Aletheia now supports CPython 3.5, 3.6, 3.7,
   and PyPy 3.5 v6.0.0
 
 
 0.6.1
 =====
+
 * Switched to using `file-magic`_ instead of `python-magic`_.  The effects &
   performance are the same, but file-magic appears to be more commonly used in
-  different Linux distros and I'd like for packaging to be as easily as
-  possible.
+  different Linux distros and I'd like for packaging to be as easy as possible.
 * Added tox tests for Python 3.7
 
 .. _file-magic: https://pypi.org/project/file-magic/
@@ -23,6 +24,7 @@ Changelog
 
 0.6.0
 =====
+
 * We now make use of FFmpeg's hashing features rather than trying to determine
   a "safe" way of drawing out the raw data from a file.
 * Support for MKV files added.
@@ -33,11 +35,13 @@ Changelog
 
 0.5.0
 =====
+
 * Support for HTML files added.
 
 
 0.4.0
 =====
+
 * After some tinkering with a few alternatives, FFmpeg is now the standard way
   to generate the "raw data" component for audio & video.
 * Support for MP4 files added.
