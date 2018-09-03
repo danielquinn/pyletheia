@@ -3,6 +3,15 @@
 Changelog
 #########
 
+0.6.3
+=====
+* Changed the dependency on file-magic to require a minimum of v0.3.0 rather
+  than v.0.4.0.  This is to make packaging for Arch Linux easier.
+* Added a new function to ``setup.py`` to automatically generate a PKGBUILD
+  file.
+* Removed ``scripts/*`` from the ``MANIFEST`` file as that directory is no
+  longer used.
+
 0.6.2
 =====
 
