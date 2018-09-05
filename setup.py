@@ -49,7 +49,7 @@ def make_aur():
         pkgdesc="Fight fake news with cryptography & human nature"
         _name=${pkgname#python-}
         arch=('any')
-        url="https://danielquinn.github.io/aletheia"
+        url="https://pypi.org/project/aletheia/"
         license=('AGPL3')
         makedepends=('python-setuptools')
         depends=('ffmpeg'
