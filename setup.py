@@ -29,7 +29,7 @@ def make_aur():
             f.read().strip()
         )
 
-    package_path = f"dist/aletheia-{version}.tar.gz"
+    package_path = "dist/aletheia-{}.tar.gz".format(version)
     if not os.path.exists(package_path):
         print(
             "The package doesn't exist yet. You should run setup.py publish "
