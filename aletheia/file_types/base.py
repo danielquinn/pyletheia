@@ -1,4 +1,5 @@
 import binascii
+import errno
 import hashlib
 import json
 import os
@@ -318,7 +319,7 @@ class FFmpegFile(File):
                 stderr=subprocess.DEVNULL
             ).stdout.read().decode().strip().split("=")[1].encode()
         except OSError as e:
-            if e.errno == os.errno.ENOENT:
+            if e.errno == errno.ENOENT:
                 raise DependencyMissingError(
                     "Handling this file type requires a working installation "
                     "of FFmpeg (https://ffmpeg.org/) and for the moment, "
