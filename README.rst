@@ -1,5 +1,5 @@
-pyletheia
-=========
+Aletheia for Python
+===================
 |PyPi| |Thanks!| |License| |Documentation|
 
 A Python 3 implementation of `Aletheia`_.
