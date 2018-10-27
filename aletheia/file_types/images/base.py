@@ -49,7 +49,7 @@ class ImageFile(File):
             proc = subprocess.Popen(
                 (
                     "exiftool",
-                    f"-ImageSupplierImageID={payload}",
+                    "-ImageSupplierImageID={}".format(payload),
                     "-overwrite_original",
                     self.source
                 ),
@@ -87,7 +87,7 @@ class ImageFile(File):
                 if proc.wait():
                     raise RuntimeError(proc.stderr.read())
 
-                data = json.loads(proc.stdout.read())
+                data = json.loads(proc.stdout.read().decode())
                 key_url = data["public-key"]
                 signature = data["signature"]
 
