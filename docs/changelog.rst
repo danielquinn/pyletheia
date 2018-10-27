@@ -12,6 +12,7 @@ Changelog
   of what operating system you're using.  Unfortunately, this also means that
   files signed with past versions of Aletheia will fail a verification check in
   this new version.
+* GIF and PNG files are now supported, thanks to the inclusion of exiftool.
 
 .. _exiftool: https://sno.phy.queensu.ca/~phil/exiftool/
 

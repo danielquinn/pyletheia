@@ -14,7 +14,12 @@ class StackTestCase(TestCase):
     file type.
     """
 
-    TEST_FILES = ("html", "jpg", "mkv", "mp3", "mp4", "webm")
+    TEST_TYPES = (
+        "mp3",
+        "html", 
+        "gif", "jpg", "png", 
+        "mkv", "mp4", "webm"
+    )
 
     @patch.dict("os.environ", {"HOME": TestCase.SCRATCH})
     @patch.dict("os.environ", {"ALETHEIA_HOME": TestCase.SCRATCH})
@@ -49,7 +54,7 @@ class StackTestCase(TestCase):
         self.assertTrue(
             os.path.exists(os.path.join(self.SCRATCH, "aletheia.pub")))
 
-        for suffix in self.TEST_FILES:
+        for suffix in self.TEST_TYPES:
 
             filename = "test.{}".format(suffix)
             source_path = os.path.normpath(
