@@ -18,20 +18,24 @@ System Dependencies
 
 Aletheia requires ``libmagic``, which comes standard with most Linux & BSD
 systems, but may need to be installed on your system if you're running OSX or
-Windows.  For OSX, you can probably install this with Homebrew, but I'm not
-sure what happens with Windows.
+Windows.  For OSX, you can install this with Homebrew with
+``brew install libmagic``, but I'm not sure what happens with Windows.
 
-In addition to libmagic, Aletheia needs to have the ability to talk to the
-exceptional `FFmpeg`_ program.  Installing it is easy on any platform though,
-even Windows ;-)
+In addition to libmagic, Aletheia needs to have the ability to talk to two
+external programs:
+
+* `FFmpeg`_: used to read & write audio & video files.
+* `exiftool`_: used to read & write image files.
+
+The Installing both of these is easy on any platform though, even Windows ;-)
 
 The download & installation instructions for your operating system of choice
-can be found `on the project page`_.  Once that's finished, and you can
-successfully execute ``ffmpeg`` on the command line, you're ready to install
-Aletheia.
+can be found on their respective project pages.  Once that's finished, and you
+can successfully execute ``ffmpeg`` and ``exiftool`` on the command line,
+you're ready to install Aletheia.
 
 .. _FFmpeg: https://ffmpeg.org/
-.. _on the project page: http://ffmpeg.org/download.html
+.. _exiftool: https://sno.phy.queensu.ca/~phil/exiftool/
 
 
 Python

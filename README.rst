@@ -51,3 +51,57 @@ again.
 New technologies are evolving every day that allow better and better fakes to
 be created.  Now more than ever we need a way to figure out whether we trust
 the source of something we're seeing.  This is an attempt to do that.
+
+
+How to Use it
+-------------
+
+The process is pretty straight forward.  Install the system dependencies as
+described in the `setup documentation`_ and then:
+
+.. code-block:: bash
+
+    $ pip install aletheia
+
+Once it's installed, you can verify a file to try it out.  Use `this one`_ as a
+starting example.
+
+
+Command Line API
+................
+
+.. code-block:: bash
+
+    $ aletheia verify path/to/test.jpg
+
+
+Python API
+..........
+
+.. code-block:: python
+
+    from aletheia.utils import verify
+
+    verify("path/to/test.jpg")
+
+
+More details can be found in the `command line API`_ and `Python API`_ documentation.
+
+.. _this one: https://raw.githubusercontent.com/danielquinn/pyletheia/master/tests/data/signed/test.jpg
+.. _setup documentation: https://aletheia-project.readthedocs.io/en/latest/setup.html
+.. _command line API: https://aletheia-project.readthedocs.io/en/latest/commandline-api.html
+.. _Python API: https://aletheia-project.readthedocs.io/en/latest/python-api.html
+
+
+Colophon & Disambiguation
+-------------------------
+
+This project is named for the Greek goddess of truth & verity -- a reasonable
+name for a project that's trying to restore truth and verified origins to the
+web.  It also doesn't hurt that the lead developer's wife is Greek ;-)
+
+It's been noted that there's `another project out there with the same name`_.
+The two projects are totally unrelated, despite the identical name *and* the
+fact that both lead developers are named "Daniel".
+
+.. _another project out there with the same name: https://github.com/daniellerch/aletheia
