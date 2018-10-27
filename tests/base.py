@@ -1,3 +1,4 @@
+import tempfile
 import logging
 import os
 import shutil
@@ -13,7 +14,6 @@ from cryptography.hazmat.primitives.serialization import (
 class TestCase(BaseTestCase):
 
     DATA = os.path.join(os.path.dirname(__file__), "data")
-    SCRATCH = os.getenv("ALETHEIA_SCRATCH", "/tmp/aletheia-tests")
 
     # A hash of https://example.com/aletheia.pub
     EXAMPLE_DOT_COM = "3a6d1800cf22c948c65cec99d968d75dce1611d765c27d87e5b36df7959be1daebbac32b1007cc0f417912e2cc49245c1d01666270c910451cf4cecead9922e7"  # NOQA: E501
@@ -23,11 +23,11 @@ class TestCase(BaseTestCase):
         logging.basicConfig(level=logging.DEBUG)
 
     def setUp(self):
-        shutil.rmtree(self.SCRATCH, ignore_errors=True)
-        os.makedirs(os.path.join(self.SCRATCH, "public-keys"), exist_ok=True)
+        self.scratch = tempfile.mkdtemp()
+        os.makedirs(os.path.join(self.scratch, "public-keys"), exist_ok=True)
 
     def tearDown(self):
-        shutil.rmtree(self.SCRATCH, ignore_errors=True)
+        shutil.rmtree(self.scratch, ignore_errors=True)
 
     def get_private_key(self):
         with open(os.path.join(self.DATA, "key.pem"), "rb") as f:
@@ -38,7 +38,7 @@ class TestCase(BaseTestCase):
             return load_pem_public_key(f.read(), default_backend())
 
     def cache_public_key(self) -> str:
-        cache = os.path.join(self.SCRATCH, "public-keys")
+        cache = os.path.join(self.scratch, "public-keys")
         shutil.copy(
             os.path.join(self.DATA, "key.pub"),
             os.path.join(cache, self.EXAMPLE_DOT_COM)
@@ -47,9 +47,9 @@ class TestCase(BaseTestCase):
 
     def copy_for_work(self, directory: str, type_: str) -> str:
         """
-        Copy our test file to SCRATCH so we can fiddle with it.
+        Copy our test file to ``scratch`` so we can fiddle with it.
         """
-        path = os.path.join(self.SCRATCH, "test.{}".format(type_))
+        path = os.path.join(self.scratch, "test.{}".format(type_))
         shutil.copyfile(
             os.path.join(self.DATA, directory, "test.{}".format(type_)),
             path

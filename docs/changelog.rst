@@ -13,6 +13,9 @@ Changelog
   files signed with past versions of Aletheia will fail a verification check in
   this new version.
 * GIF and PNG files are now supported, thanks to the inclusion of exiftool.
+* The tests were restructured to handle a multi-threaded test environment
+  better.  You can now run the tests with ``pytest -n auto`` on multi-cored
+  machines for a significant speed improvement.
 
 .. _exiftool: https://sno.phy.queensu.ca/~phil/exiftool/
 

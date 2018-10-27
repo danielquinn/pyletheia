@@ -19,49 +19,49 @@ class FileTestCase(TestCase):
 
     def test_build_html(self):
         self.assertIsInstance(
-            File.build(self._generate_path("html"), self.SCRATCH),
+            File.build(self._generate_path("html"), self.scratch),
             HtmlFile
         )
 
     def test_build_gif(self):
         self.assertIsInstance(
-            File.build(self._generate_path("gif"), self.SCRATCH),
+            File.build(self._generate_path("gif"), self.scratch),
             GifFile
         )
 
     def test_build_jpg(self):
         self.assertIsInstance(
-            File.build(self._generate_path("jpg"), self.SCRATCH),
+            File.build(self._generate_path("jpg"), self.scratch),
             JpegFile
         )
 
     def test_build_png(self):
         self.assertIsInstance(
-            File.build(self._generate_path("png"), self.SCRATCH),
+            File.build(self._generate_path("png"), self.scratch),
             PngFile
         )
 
     def test_build_mp3(self):
         self.assertIsInstance(
-            File.build(self._generate_path("mp3"), self.SCRATCH),
+            File.build(self._generate_path("mp3"), self.scratch),
             Mp3File
         )
 
     def test_build_mkv(self):
         self.assertIsInstance(
-            File.build(self._generate_path("mkv"), self.SCRATCH),
+            File.build(self._generate_path("mkv"), self.scratch),
             MkvFile
         )
 
     def test_build_mp4(self):
         self.assertIsInstance(
-            File.build(self._generate_path("mp4"), self.SCRATCH),
+            File.build(self._generate_path("mp4"), self.scratch),
             Mp4File
         )
 
     def test_build_webm(self):
         self.assertIsInstance(
-            File.build(self._generate_path("webm"), self.SCRATCH),
+            File.build(self._generate_path("webm"), self.scratch),
             WebmFile
         )
 

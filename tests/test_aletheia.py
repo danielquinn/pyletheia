@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 import test.support
 import unittest
 
@@ -8,24 +9,23 @@ from aletheia.aletheia import Aletheia
 
 class AletheiaTestCase(unittest.TestCase):
 
-    SCRATCH = "/tmp/aletheia-tests"
-
     def setUp(self):
 
         self.env = test.support.EnvironmentVarGuard()
-        self.env["HOME"] = self.SCRATCH
+        self.scratch = tempfile.mkdtemp(prefix="aletheia-tests-")
+        self.env["HOME"] = self.scratch
 
         os.makedirs(self.env["HOME"], exist_ok=True)
 
     def tearDown(self):
-        shutil.rmtree(self.SCRATCH, ignore_errors=True)
+        shutil.rmtree(self.scratch, ignore_errors=True)
 
     def test___init___defaults(self):
 
         with self.env:
             aletheia = Aletheia()
 
-        home = "{}/.config/aletheia".format(self.SCRATCH)
+        home = "{}/.config/aletheia".format(self.scratch)
         self.assertEqual(
             aletheia.private_key_path, "{}/aletheia.pem".format(home))
         self.assertEqual(
@@ -51,7 +51,7 @@ class AletheiaTestCase(unittest.TestCase):
         with self.env:
             Aletheia().generate()
 
-        home = os.path.join(self.SCRATCH, ".config", "aletheia")
+        home = os.path.join(self.scratch, ".config", "aletheia")
         self.assertTrue(os.path.exists(os.path.join(home, "aletheia.pem")))
         self.assertTrue(os.path.exists(os.path.join(home, "aletheia.pub")))
 
