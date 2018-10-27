@@ -57,8 +57,12 @@ class StackTestCase(TestCase):
         for suffix in self.TEST_TYPES:
 
             filename = "test.{}".format(suffix)
-            source_path = os.path.normpath(
-                os.path.join(os.path.dirname(__file__), "data", filename))
+            source_path = os.path.normpath(os.path.join(
+                os.path.dirname(__file__),
+                "data",
+                "original",
+                filename
+            ))
 
             # Copy our test file to SCRATCH so we can fiddle with it
 

@@ -45,10 +45,13 @@ class TestCase(BaseTestCase):
         )
         return cache
 
-    def copy_for_work(self, name: str) -> str:
+    def copy_for_work(self, directory: str, type_: str) -> str:
         """
         Copy our test file to SCRATCH so we can fiddle with it.
         """
-        path = os.path.join(self.SCRATCH, name)
-        shutil.copyfile(os.path.join(self.DATA, name), path)
+        path = os.path.join(self.SCRATCH, "test.{}".format(type_))
+        shutil.copyfile(
+            os.path.join(self.DATA, directory, "test.{}".format(type_)),
+            path
+        )
         return path

@@ -15,13 +15,13 @@ class WebmTestCase(TestCase):
 
     def test_get_raw_data_from_path(self):
 
-        unsigned = os.path.join(self.DATA, "test.webm")
+        unsigned = os.path.join(self.DATA, "original", "test.webm")
         self.assertEqual(
             md5(WebmFile(unsigned, "").get_raw_data()).hexdigest(),
             "5a700824a26f00a5716afad6931b085c"
         )
 
-        signed = os.path.join(self.DATA, "test-signed.webm")
+        signed = os.path.join(self.DATA, "signed", "test.webm")
         self.assertEqual(
             md5(WebmFile(signed, "").get_raw_data()).hexdigest(),
             "5a700824a26f00a5716afad6931b085c",
@@ -30,7 +30,7 @@ class WebmTestCase(TestCase):
 
     def test_sign_from_path(self):
 
-        path = self.copy_for_work("test.webm")
+        path = self.copy_for_work("original", "webm")
 
         f = WebmFile(path, "")
         f.generate_signature = mock.Mock(return_value="signature")
@@ -52,28 +52,28 @@ class WebmTestCase(TestCase):
 
     def test_verify_from_path_no_signature(self):
 
-        path = self.copy_for_work("test.webm")
+        path = self.copy_for_work("original", "webm")
 
         f = WebmFile(path, "")
         self.assertRaises(UnparseableFileError, f.verify)
 
     def test_verify_bad_signature(self):
         cache = self.cache_public_key()
-        path = self.copy_for_work("test-bad-signature.webm")
+        path = self.copy_for_work("bad", "webm")
 
         f = WebmFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify_broken_signature(self):
         cache = self.cache_public_key()
-        path = self.copy_for_work("test-broken-signature.webm")
+        path = self.copy_for_work("broken", "webm")
 
         f = WebmFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify_from_path(self):
 
-        path = self.copy_for_work("test-signed.webm")
+        path = self.copy_for_work("signed", "webm")
 
         f = WebmFile(path, "")
         f.verify_signature = mock.Mock(return_value=True)

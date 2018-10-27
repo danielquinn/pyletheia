@@ -13,13 +13,13 @@ from ...base import TestCase
 class PngTestCase(TestCase):
 
     def test_get_raw_data(self):
-        unsigned = os.path.join(self.DATA, "test.png")
+        unsigned = os.path.join(self.DATA, "original", "test.png")
         self.assertEqual(
             md5(JpegFile(unsigned, "").get_raw_data()).hexdigest(),
             "65027be33b8b7b26a95695b5dc582c32"
         )
 
-        signed = os.path.join(self.DATA, "test-signed.png")
+        signed = os.path.join(self.DATA, "signed", "test.png")
         self.assertEqual(
             md5(JpegFile(signed, "").get_raw_data()).hexdigest(),
             "65027be33b8b7b26a95695b5dc582c32",
@@ -28,7 +28,7 @@ class PngTestCase(TestCase):
 
     def test_sign(self):
 
-        path = self.copy_for_work("test.png")
+        path = self.copy_for_work("original", "png")
 
         f = JpegFile(path, "")
         f.generate_signature = mock.Mock(return_value="signature")
@@ -45,7 +45,7 @@ class PngTestCase(TestCase):
 
     def test_verify_no_signature(self):
 
-        path = self.copy_for_work("test.png")
+        path = self.copy_for_work("original", "png")
 
         f = JpegFile(path, "")
         self.assertRaises(UnparseableFileError, f.verify)
@@ -53,7 +53,7 @@ class PngTestCase(TestCase):
     def test_verify_bad_signature(self):
 
         cache = self.cache_public_key()
-        path = self.copy_for_work("test-bad-signature.png")
+        path = self.copy_for_work("bad", "png")
 
         f = JpegFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
@@ -61,14 +61,14 @@ class PngTestCase(TestCase):
     def test_verify_broken_signature(self):
 
         cache = self.cache_public_key()
-        path = self.copy_for_work("test-broken-signature.png")
+        path = self.copy_for_work("broken", "png")
 
         f = JpegFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify(self):
 
-        path = self.copy_for_work("test-signed.png")
+        path = self.copy_for_work("signed", "png")
 
         f = JpegFile(path, "")
         f.verify_signature = mock.Mock(return_value=True)

@@ -15,13 +15,13 @@ class MkvTestCase(TestCase):
 
     def test_get_raw_data_from_path(self):
 
-        unsigned = os.path.join(self.DATA, "test.mkv")
+        unsigned = os.path.join(self.DATA, "original", "test.mkv")
         self.assertEqual(
             md5(MkvFile(unsigned, "").get_raw_data()).hexdigest(),
             "4615032ec7809abe6a71cde68bf1be68"
         )
 
-        signed = os.path.join(self.DATA, "test-signed.mkv")
+        signed = os.path.join(self.DATA, "signed", "test.mkv")
         self.assertEqual(
             md5(MkvFile(signed, "").get_raw_data()).hexdigest(),
             "4615032ec7809abe6a71cde68bf1be68",
@@ -30,7 +30,7 @@ class MkvTestCase(TestCase):
 
     def test_sign_from_path(self):
 
-        path = self.copy_for_work("test.mkv")
+        path = self.copy_for_work("original", "mkv")
 
         f = MkvFile(path, "")
         f.generate_signature = mock.Mock(return_value="signature")
@@ -52,28 +52,28 @@ class MkvTestCase(TestCase):
 
     def test_verify_from_path_no_signature(self):
 
-        path = self.copy_for_work("test.mkv")
+        path = self.copy_for_work("original", "mkv")
 
         f = MkvFile(path, "")
         self.assertRaises(UnparseableFileError, f.verify)
 
     def test_verify_bad_signature(self):
         cache = self.cache_public_key()
-        path = self.copy_for_work("test-bad-signature.mkv")
+        path = self.copy_for_work("bad", "mkv")
 
         f = MkvFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify_broken_signature(self):
         cache = self.cache_public_key()
-        path = self.copy_for_work("test-broken-signature.mkv")
+        path = self.copy_for_work("broken", "mkv")
 
         f = MkvFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
     def test_verify_from_path(self):
 
-        path = self.copy_for_work("test-signed.mkv")
+        path = self.copy_for_work("signed", "mkv")
 
         f = MkvFile(path, "")
         f.verify_signature = mock.Mock(return_value=True)
