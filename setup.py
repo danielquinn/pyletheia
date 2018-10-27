@@ -53,14 +53,13 @@ def make_aur():
         license=('AGPL3')
         makedepends=('python-setuptools')
         depends=('ffmpeg'
+        'perl-image-exiftool'
         'python'
         'python-setuptools'
-        'python-pillow'
         'python-cryptography'
         'python-magic'
         'python-requests'
-        'python-termcolor'
-        'python-piexif')
+        'python-termcolor')
         source=("https://files.pythonhosted.org/packages/source/${_name::1}/${_name}/${_name}-${pkgver}.tar.gz")
         sha512sums=('HASH')
         

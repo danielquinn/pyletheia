@@ -1,12 +1,11 @@
 import os
+import subprocess
 from hashlib import md5
 from unittest import mock
 
-import piexif
-from cryptography.exceptions import InvalidSignature
-
 from aletheia.exceptions import UnparseableFileError
 from aletheia.file_types import JpegFile
+from cryptography.exceptions import InvalidSignature
 
 from ...base import TestCase
 
@@ -17,13 +16,13 @@ class JpegTestCase(TestCase):
         unsigned = os.path.join(self.DATA, "test.jpg")
         self.assertEqual(
             md5(JpegFile(unsigned, "").get_raw_data()).hexdigest(),
-            "cc96a1bff6c259f0534f191e83cfdf0e"
+            "c08b00b988d086cf0394929f8016b12b"
         )
 
         signed = os.path.join(self.DATA, "test-signed.jpg")
         self.assertEqual(
             md5(JpegFile(signed, "").get_raw_data()).hexdigest(),
-            "cc96a1bff6c259f0534f191e83cfdf0e",
+            "c08b00b988d086cf0394929f8016b12b",
             "Modifying the metadata should have no effect on the raw data"
         )
 
@@ -34,10 +33,15 @@ class JpegTestCase(TestCase):
         f = JpegFile(path, "")
         f.generate_signature = mock.Mock(return_value="signature")
         f.generate_payload = mock.Mock(return_value="payload")
-        f.sign(None, None)
+        f.sign(None, "")
 
-        exif = piexif.load(path)
-        self.assertEqual(exif["0th"][piexif.ImageIFD.HostComputer], b"payload")
+        self.assertIn(
+            "payload",
+            subprocess.Popen(
+                ("exiftool", path),
+                stdout=subprocess.PIPE
+            ).stdout.read().decode()
+        )
 
     def test_verify_no_signature(self):
 

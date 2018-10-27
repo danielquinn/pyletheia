@@ -3,11 +3,25 @@
 Changelog
 #########
 
+1.0.0
+=====
+* Use of Pillow and piexif have been dropped in favour of `exiftool`_.  This
+  was due largely to the fact that Pillow's ``.tobytes()`` method performs
+  differently from environment to environment, making Aletheia's job quite
+  impossible.  Standardising on exiftool means reproducible results regardless
+  of what operating system you're using.  Unfortunately, this also means that
+  files signed with past versions of Aletheia will fail a verification check in
+  this new version.
+
+.. _exiftool: https://sno.phy.queensu.ca/~phil/exiftool/
+
+
 0.6.4
 =====
 
 * Bugfix release: Attempting to run Aletheia on a video file will now no longer
   explode with a traceback if FFMpeg isn't installed.
+
 
 0.6.3
 =====
@@ -18,6 +32,7 @@ Changelog
   file.
 * Removed ``scripts/*`` from the ``MANIFEST`` file as that directory is no
   longer used.
+
 
 0.6.2
 =====
