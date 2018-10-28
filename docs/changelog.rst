@@ -8,8 +8,8 @@ Changelog
 
 * Added a ``--version`` flag to the command line interface.
 * Added some performance tweaks to how we're calling exiftool.
-* Updated the ``UnparseableFileError`` exceptions to include a little more
-  information about what went wrong.  `#4`_
+* Updated various exceptions to include a little more information about what
+  went wrong.  `#4`_
 
 .. _#4: https://github.com/danielquinn/pyletheia/issues/4
 
