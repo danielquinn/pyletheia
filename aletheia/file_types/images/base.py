@@ -21,12 +21,13 @@ class ImageFile(File):
         with open(self.source, "rb") as f:
 
             try:
-                return subprocess.Popen(
+                proc = subprocess.Popen(
                     ("exiftool", "-all=", "-"),
-                    stdin=f,
+                    stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL
-                ).stdout.read()
+                    stderr=subprocess.PIPE
+                )
+                return proc.communicate(input=f.read())[0]
 
             except FileNotFoundError:
                 raise DependencyMissingError(self.NOT_FOUND_ERROR_MESSAGE)
@@ -44,7 +45,7 @@ class ImageFile(File):
 
         try:
 
-            subprocess.Popen(
+            subprocess.call(
                 (
                     "exiftool",
                     "-ImageSupplierImageID={}".format(payload),
@@ -77,8 +78,8 @@ class ImageFile(File):
                     ),
                     stdin=f,
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL
-                ).stdout.read().decode())
+                    stderr=subprocess.PIPE
+                ).communicate()[0].decode())
 
                 key_url = data["public-key"]
                 signature = data["signature"]

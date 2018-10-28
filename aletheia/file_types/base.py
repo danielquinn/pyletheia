@@ -317,7 +317,7 @@ class FFmpegFile(File):
                 ),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL
-            ).stdout.read().decode().strip().split("=")[1].encode()
+            ).communicate()[0].decode().strip().split("=")[1].encode()
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise DependencyMissingError(
@@ -391,10 +391,10 @@ class FFmpegFile(File):
             ),
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL
-        ).stdout
+        ).communicate()[0]
 
         needle = "{}=".format(self._get_metadata_key())
-        for line in metadata.readlines():
+        for line in metadata.split():
             line = line.decode()
             if line.startswith(needle):
                 return json.loads(line.split("=", 1)[-1])
