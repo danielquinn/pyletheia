@@ -87,7 +87,7 @@ Python API
 
 More details can be found in the `command line API`_ and `Python API`_ documentation.
 
-.. _this one: https://raw.githubusercontent.com/danielquinn/pyletheia/master/tests/data/signed/test.jpg
+.. _this one: https://danielquinn.org/media/cache/thumbnails/gallery/2014/11/3/139743.jpg.800x534_q85_crop-smart.jpg
 .. _setup documentation: https://aletheia-project.readthedocs.io/en/latest/setup.html
 .. _command line API: https://aletheia-project.readthedocs.io/en/latest/commandline-api.html
 .. _Python API: https://aletheia-project.readthedocs.io/en/latest/python-api.html
