@@ -163,7 +163,8 @@ class Command:
             return 4
         except PublicKeyNotExistsError:
             cprint(
-                "\n  The specified URL does not contain a public key\n",
+                "\n  The URL contained in the file header either can't be "
+                "accessed, or does not contain a public key\n",
                 "red"
             )
             return 5

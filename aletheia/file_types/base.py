@@ -191,14 +191,22 @@ class File(LoggingMixin):
                      backend=default_backend()
                 )
 
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except requests.exceptions.RequestException:
+            raise PublicKeyNotExistsError(
+                "Can't connect to {} to acquire the public key".format(url)
+            )
+
         if response.status_code == 200:
             if b"BEGIN PUBLIC KEY" in response.content:
                 with open(cache, "wb") as f:
                     f.write(requests.get(url).content)
                 return self._get_public_key(url)
 
-        raise PublicKeyNotExistsError()
+        raise PublicKeyNotExistsError(
+            "The public key could not be found at {}".format(url)
+        )
 
     @staticmethod
     def _guess_mimetype(path) -> str:
