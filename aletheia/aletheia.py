@@ -63,7 +63,9 @@ class Aletheia(LoggingMixin):
     def sign(self, path, public_key_url):
 
         if not os.path.exists(path):
-            raise FileNotFoundError("Specified file doesn't exist")
+            raise FileNotFoundError(
+                "Specified file \"{}\" doesn't exist".format(path)
+            )
 
         File.build(path, self.public_key_cache).sign(
             self._get_private_key(),
@@ -73,7 +75,9 @@ class Aletheia(LoggingMixin):
     def verify(self, path):
 
         if not os.path.exists(path):
-            raise FileNotFoundError("Specified file doesn't exist")
+            raise FileNotFoundError(
+                "Specified file \"{}\" doesn't exist".format(path)
+            )
 
         return File.build(path, self.public_key_cache).verify()
 

@@ -365,8 +365,7 @@ class FFmpegFile(File):
             signature = payload["signature"]
 
         except (ValueError, TypeError, IndexError, json.JSONDecodeError):
-            self.logger.error("Invalid format, or no signature found")
-            raise UnparseableFileError()
+            raise UnparseableFileError("Invalid format, or no signature found")
 
         return self.verify_signature(key_url, signature)
 

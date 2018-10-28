@@ -98,8 +98,9 @@ class ImageFile(File):
                 raise UnparseableFileError(e)
 
             except (KeyError, json.JSONDecodeError):
-                self.logger.warning("Invalid format, or no signature found")
-                raise UnparseableFileError()
+                raise UnparseableFileError(
+                    "Invalid format, or no signature found"
+                )
 
         self.logger.debug("Signature found: %s", signature)
 
