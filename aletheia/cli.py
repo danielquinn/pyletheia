@@ -12,6 +12,7 @@ from cryptography.exceptions import InvalidSignature
 from termcolor import cprint
 
 from aletheia.aletheia import Aletheia
+from aletheia import __version__
 from aletheia.exceptions import (
     DependencyMissingError,
     InvalidURLError,
@@ -28,6 +29,10 @@ class Command:
 
         self.parser = argparse.ArgumentParser(prog="aletheia")
         self.parser.set_defaults(func=self.parser.print_help)
+
+        self.parser.add_argument(
+            "--version", dest="version", action="store_true", default=False)
+
         subparsers = self.parser.add_subparsers(dest="subcommand")
 
         subparsers.add_parser(
@@ -52,11 +57,19 @@ class Command:
 
         args = instance.parser.parse_args()
 
+        if args.version:
+            instance._print_version()
+            return 0
+
         if args.subcommand:
             return getattr(instance, args.subcommand)(args)
 
         instance.parser.print_help()
         return 0
+
+    @staticmethod
+    def _print_version():
+        cprint(".".join(str(_) for _ in __version__))
 
     @classmethod
     def generate(cls, *args):
