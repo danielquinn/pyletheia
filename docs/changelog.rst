@@ -3,8 +3,15 @@
 Changelog
 #########
 
+1.0.1 (not yet released)
+========================
+
+* Added a ``--version`` flag to the command line interface.
+
+
 1.0.0
 =====
+
 * Use of Pillow and piexif have been dropped in favour of `exiftool`_.  This
   was due largely to the fact that Pillow's ``.tobytes()`` method performs
   differently from environment to environment, making Aletheia's job quite
