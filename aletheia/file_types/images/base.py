@@ -19,16 +19,14 @@ class ImageFile(File):
     def get_raw_data(self) -> bytes:
 
         with open(self.source, "rb") as f:
+
             try:
-                proc = subprocess.Popen(
+                return subprocess.Popen(
                     ("exiftool", "-all=", "-"),
                     stdin=f,
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-                if proc.wait():
-                    raise RuntimeError(proc.stderr.read())
-                return proc.stdout.read()
+                    stderr=subprocess.DEVNULL
+                ).stdout.read()
 
             except FileNotFoundError:
                 raise DependencyMissingError(self.NOT_FOUND_ERROR_MESSAGE)
@@ -46,7 +44,7 @@ class ImageFile(File):
 
         try:
 
-            proc = subprocess.Popen(
+            subprocess.Popen(
                 (
                     "exiftool",
                     "-ImageSupplierImageID={}".format(payload),
@@ -54,10 +52,8 @@ class ImageFile(File):
                     self.source
                 ),
                 stdout=subprocess.DEVNULL,
-                stderr=subprocess.PIPE
+                stderr=subprocess.DEVNULL
             )
-            if proc.wait():
-                raise RuntimeError(proc.stderr.read())
 
         except RuntimeError as e:
             raise UnparseableFileError(e)
@@ -72,7 +68,7 @@ class ImageFile(File):
 
             try:
 
-                proc = subprocess.Popen(
+                data = json.loads(subprocess.Popen(
                     (
                         "exiftool",
                         "-s", "-s", "-s",
@@ -81,13 +77,9 @@ class ImageFile(File):
                     ),
                     stdin=f,
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
+                    stderr=subprocess.DEVNULL
+                ).stdout.read().decode())
 
-                if proc.wait():
-                    raise RuntimeError(proc.stderr.read())
-
-                data = json.loads(proc.stdout.read().decode())
                 key_url = data["public-key"]
                 signature = data["signature"]
 
