@@ -10,7 +10,7 @@ def publish():
     A Shortcut for building the package and pushing it into PyPI.  This is
     lifted entirely from the requests library.
     """
-    os.system("rm -vr build dist")
+    os.system("rm -vfr build dist")
     os.system("python setup.py build")
     os.system("python setup.py sdist bdist_wheel")
     os.system("twine upload dist/*")
