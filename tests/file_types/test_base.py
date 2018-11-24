@@ -3,6 +3,7 @@ import os
 from aletheia.file_types import (
     GifFile,
     HtmlFile,
+    MarkdownFile,
     JpegFile,
     MkvFile,
     Mp3File,
@@ -73,6 +74,7 @@ class FileTestCase(TestCase):
                 GifFile,
                 JpegFile,
                 PngFile,
+                MarkdownFile,
                 MkvFile,
                 Mp3File,
                 Mp4File,

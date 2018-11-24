@@ -16,7 +16,7 @@ class StackTestCase(TestCase):
 
     TEST_TYPES = (
         "mp3",
-        "html", 
+        "html", "md",
         "gif", "jpg", "png", 
         "mkv", "mp4", "webm"
     )

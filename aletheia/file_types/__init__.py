@@ -1,6 +1,7 @@
 from .base import File
 from .audio.mp3 import Mp3File
 from .documents.html import HtmlFile
+from .documents.markdown import MarkdownFile
 from .images.gif import GifFile
 from .images.jpeg import JpegFile
 from .images.png import PngFile
