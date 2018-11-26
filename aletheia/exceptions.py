@@ -16,3 +16,11 @@ class UnparseableFileError(Exception):
 
 class DependencyMissingError(Exception):
     pass
+
+
+class UnacceptableLocationError(Exception):
+    pass
+
+
+class UnrecognisedKey(Exception):
+    pass

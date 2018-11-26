@@ -1,4 +1,7 @@
 #
+#   $ aletheia --version
+#   $ aletheia public-key [--url] [--format=[pem|openssh]]
+#   $ aletheia private-key [--format=[pem|openssh]]
 #   $ aletheia generate
 #   $ aletheia sign /path/to/file public-key-url
 #   $ aletheia verify /path/to/file
@@ -8,19 +11,23 @@ import argparse
 import os
 import textwrap
 
+import requests
 from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import serialization
 from termcolor import cprint
 
-from aletheia.aletheia import Aletheia
-from aletheia import __version__
-from aletheia.exceptions import (
+from . import __version__
+from .aletheia import Aletheia
+from .common import get_key
+from .exceptions import (
     DependencyMissingError,
     InvalidURLError,
     PublicKeyNotExistsError,
+    UnacceptableLocationError,
     UnknownFileTypeError,
     UnparseableFileError
 )
-from aletheia.utils import generate, sign, verify
+from .utils import generate, sign, verify
 
 
 class Command:
@@ -39,6 +46,20 @@ class Command:
             "generate",
             help="Generate a public/private key pair for use in signing & 3rd "
                  "party verification. (Do this first)"
+        )
+
+        subparsers.add_parser(
+            "private-key", help="Get your private key")
+
+        parser_public_key = subparsers.add_parser(
+            "public-key", help="Get your public key")
+        parser_public_key.add_argument(
+            "--url", default=os.getenv("ALETHEIA_PUBLIC_KEY_URL"))
+        parser_public_key.add_argument(
+            "--format",
+            dest="format",
+            default="pem",
+            choices=("pem", "openssh")
         )
 
         parser_sign = subparsers.add_parser("sign", help="Sign a file")
@@ -62,7 +83,7 @@ class Command:
             return 0
 
         if args.subcommand:
-            return getattr(instance, args.subcommand)(args)
+            return getattr(instance, args.subcommand.replace("-", "_"))(args)
 
         instance.parser.print_help()
         return 0
@@ -72,7 +93,75 @@ class Command:
         cprint(".".join(str(_) for _ in __version__))
 
     @classmethod
-    def generate(cls, *args):
+    def private_key(cls, args: argparse.Namespace):
+
+        path = Aletheia().private_key_path
+
+        if not os.path.exists(path):
+            cprint(
+                "\n  There doesn't appear to be a private key on this "
+                "system.  Maybe you need to \ngenerate it first?\n",
+                "red"
+            )
+            return 1
+
+        with open(path, "rb") as f:
+            print(get_key(f.read()).private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.NoEncryption()
+            ).decode().strip())
+
+        return 0
+
+    @classmethod
+    def public_key(cls, args: argparse.Namespace):
+
+        key = None
+
+        if args.url:
+            try:
+                key = get_key(requests.get(args.url).content)
+            except requests.exceptions.RequestException:
+                cprint(
+                    "\n  That URL does not appear to contain a public key\n",
+                    "red"
+                )
+                return 1
+
+        if not key:
+
+            path = Aletheia().public_key_path
+
+            if not os.path.exists(path):
+                cprint(
+                    "\n  There doesn't appear to be a public key on this "
+                    "system. and no URL has been \n  specified.  Maybe you "
+                    "need to generate it first?\n",
+                    "red"
+                )
+                return 1
+
+            with open(path, "rb") as f:
+                key = get_key(f.read())
+
+        kwargs = {
+            "pem": {
+                "encoding": serialization.Encoding.PEM,
+                "format": serialization.PublicFormat.PKCS1
+            },
+            "openssh": {
+                "encoding": serialization.Encoding.OpenSSH,
+                "format": serialization.PublicFormat.OpenSSH
+            }
+        }
+
+        print(key.public_bytes(**kwargs[args.format]).decode().strip())
+
+        return 0
+
+    @classmethod
+    def generate(cls, args: argparse.Namespace):
 
         private = Aletheia().private_key_path
         if os.path.exists(private):
@@ -176,6 +265,11 @@ class Command:
                 str(e), initial_indent="  ", subsequent_indent="  ")
             cprint(f"\n{message}\n", "red")
             return 7
+        except UnacceptableLocationError as e:
+            message = textwrap.fill(
+                str(e), initial_indent="  ", subsequent_indent="  ")
+            cprint(f"\n{message}\n", "red")
+            return 8
 
         template = "\n  ✔  The file is verified as having originated at {}\n"
         cprint(template.format(domain), "green")
