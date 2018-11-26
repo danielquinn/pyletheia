@@ -15,7 +15,7 @@
 from .aletheia import Aletheia
 
 
-def generate(**kwargs):
+def generate(**kwargs):  # pragma: nocov
     """
     Creates your public/private key pair and either stores them in
     ``${ALETHEIA_HOME}/.aletheia/``, or if you provide ``public_key_path`` and
@@ -25,7 +25,7 @@ def generate(**kwargs):
     Aletheia(**kwargs).generate()
 
 
-def sign(path, public_key_url, **kwargs):
+def sign(path, public_key_url, **kwargs):  # pragma: nocov
     """
     Attempts to sign an file with your private key.  If you provide a
     ``private_key_path``, Aletheia will look for it there, otherwise it will
@@ -35,7 +35,7 @@ def sign(path, public_key_url, **kwargs):
     Aletheia(**kwargs).sign(path, public_key_url)
 
 
-def sign_bulk(paths, public_key_url, **kwargs):
+def sign_bulk(paths, public_key_url, **kwargs):  # pragma: nocov
     """
     Does what ``sign()`` does, but for lots of files, saving you the setup &
     teardown time for key handling.
@@ -45,7 +45,7 @@ def sign_bulk(paths, public_key_url, **kwargs):
         aletheia.sign(path, public_key_url)
 
 
-def verify(path, **kwargs):
+def verify(path, **kwargs):  # pragma: nocov
     """
     Aletheia will import the public key from the URL in the file's metadata and
     attempt to verify the data by comparing the key to the embedded signature.
@@ -56,7 +56,7 @@ def verify(path, **kwargs):
     return Aletheia(**kwargs).verify(path)
 
 
-def verify_bulk(paths, **kwargs):
+def verify_bulk(paths, **kwargs):  # pragma: nocov
     """
     Does what ``verify()`` does, but for lots of files, saving you the setup &
     teardown time for key handling.
