@@ -4,7 +4,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-from .common import LoggingMixin
+from .common import LoggingMixin, get_key
 from .file_types import File
 
 
@@ -95,19 +95,11 @@ class Aletheia(LoggingMixin):
         if environment_key:
             environment_key = bytes(environment_key.encode("utf-8"))
             if b"BEGIN RSA PRIVATE KEY" in environment_key.split(b"\n")[0]:
-                return serialization.load_pem_private_key(
-                     environment_key,
-                     password=None,
-                     backend=default_backend()
-                )
+                return get_key(environment_key)
 
         if os.path.exists(self.private_key_path):
             with open(self.private_key_path, "rb") as f:
-                return serialization.load_pem_private_key(
-                     f.read(),
-                     password=None,
-                     backend=default_backend()
-                )
+                return get_key(f.read())
 
         raise RuntimeError(
             "You don't have a private key defined, so signing is currently "

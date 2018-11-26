@@ -1,5 +1,10 @@
 import logging
 
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+
+from .exceptions import UnrecognisedKey
+
 
 class LoggingMixin:
     """
@@ -19,3 +24,24 @@ class LoggingMixin:
             ".".join(["pyletheia", __name__, self.__class__.__name__]))
 
         return self.logger
+
+
+def get_key(data: bytes):
+    """
+    Given an arbitrary string in a variety of formats, return a key object.
+    """
+
+    kwargs = {"backend": default_backend()}
+    data = data.strip()
+    if data.startswith(b"-----BEGIN RSA PRIVATE KEY-----"):
+        kwargs["password"] = None
+        return serialization.load_pem_private_key(data, **kwargs)
+    if data.startswith(b"-----BEGIN PUBLIC KEY-----"):
+        return serialization.load_pem_public_key(data, **kwargs)
+    if data.startswith(b"ssh-rsa "):
+        return serialization.load_ssh_public_key(data, **kwargs)
+
+    raise UnrecognisedKey(
+        "The key data provided could not be recognised as one formatted for "
+        "PEM or OpenSSH"
+    )
