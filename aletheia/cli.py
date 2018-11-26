@@ -97,7 +97,7 @@ class Command:
         """.replace("          ", ""), "green")
 
     @classmethod
-    def sign(cls, args):
+    def sign(cls, args: argparse.Namespace):
 
         if not args.url:
             cprint(
@@ -133,7 +133,7 @@ class Command:
         return 0
 
     @classmethod
-    def verify(cls, args):
+    def verify(cls, args: argparse.Namespace):
 
         try:
             domain = verify(args.path)

@@ -13,7 +13,11 @@ class Aletheia(LoggingMixin):
     KEY_SIZE = 8192
     PRIVATE_KEY_NAME = "ALETHEIA_PRIVATE_KEY"
 
-    def __init__(self, private_key_path=None, public_key_path=None, cache_dir=None):  # NOQA: E501
+    def __init__(
+            self,
+            private_key_path: str = None,
+            public_key_path: str = None,
+            cache_dir: str = None):
 
         join = os.path.join
 
@@ -60,7 +64,7 @@ class Aletheia(LoggingMixin):
                 format=serialization.PublicFormat.SubjectPublicKeyInfo
             ))
 
-    def sign(self, path, public_key_url):
+    def sign(self, path: str, public_key_url: str):
 
         if not os.path.exists(path):
             raise FileNotFoundError(
@@ -72,7 +76,7 @@ class Aletheia(LoggingMixin):
             public_key_url
         )
 
-    def verify(self, path):
+    def verify(self, path: str):
 
         if not os.path.exists(path):
             raise FileNotFoundError(
