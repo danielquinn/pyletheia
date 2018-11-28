@@ -1,6 +1,5 @@
 import re
 
-from ...exceptions import UnparseableFileError
 from .base import PlainTextFile
 
 
