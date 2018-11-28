@@ -90,7 +90,7 @@ class Command:
 
     @staticmethod
     def _print_version():
-        cprint(".".join(str(_) for _ in __version__))
+        print(".".join(str(_) for _ in __version__))
 
     @classmethod
     def private_key(cls, args: argparse.Namespace):
@@ -98,10 +98,9 @@ class Command:
         path = Aletheia().private_key_path
 
         if not os.path.exists(path):
-            cprint(
-                "\n  There doesn't appear to be a private key on this "
-                "system.  Maybe you need to \ngenerate it first?\n",
-                "red"
+            cls.__print_error(
+                "There doesn't appear to be a private key on this system.  "
+                "Maybe you need to generate it first?"
             )
             return 1
 
@@ -123,10 +122,8 @@ class Command:
             try:
                 key = get_key(requests.get(args.url).content)
             except requests.exceptions.RequestException:
-                cprint(
-                    "\n  That URL does not appear to contain a public key\n",
-                    "red"
-                )
+                cls.__print_error(
+                    "That URL does not appear to contain a public key")
                 return 1
 
         if not key:
@@ -134,11 +131,10 @@ class Command:
             path = Aletheia().public_key_path
 
             if not os.path.exists(path):
-                cprint(
-                    "\n  There doesn't appear to be a public key on this "
-                    "system. and no URL has been \n  specified.  Maybe you "
-                    "need to generate it first?\n",
-                    "red"
+                cls.__print_error(
+                    "There doesn't appear to be a public key on this system "
+                    "and no URL has been specified.  Maybe you need to "
+                    "generate it first?"
                 )
                 return 1
 
@@ -164,6 +160,7 @@ class Command:
     def generate(cls, args: argparse.Namespace):
 
         private = Aletheia().private_key_path
+
         if os.path.exists(private):
             cprint(
                 "It looks like you already have a key setup at {}.\n"
@@ -173,49 +170,73 @@ class Command:
             return 1
 
         cprint("\n  🔑  Generating private/public key pair...", "green")
-        generate()
-        cprint("""
-            All finished!
 
-            You now have two files: aletheia.pem (your private key) and
-            aletheia.pub (your public key).  Keep the former private, and share
-            the latter far-and-wide.  Importantly, place your public key at a
-            publicly accessible URL so that when you sign a file with your
-            private key, it can be verified by reading the public key at that
-            URL.
-        """.replace("          ", ""), "green")
+        generate()
+
+        fill_kwargs = {
+            "initial_indent": "  ",
+            "subsequent_indent": "  ",
+            "width": 79
+        }
+        cprint(
+            "\n  All finished!\n"
+            "\n"
+            "{}\n"
+            "\n"
+            "{}\n"
+            "\n"
+            "    https://example.com/aletheia.pub\n"
+            "\n"
+            "  or in a DNS TXT record in this format:\n"
+            "\n"
+            "    example.com.  3570  IN  TXT  \"aletheia-public-key=ssh-rsa AAAAB3N...\n"  # NOQA: E501
+            "\n"
+            "{}\n".format(
+                textwrap.fill(
+                    "You now have two files: aletheia.pem (your private key) "
+                    "and aletheia.pub (your public key).  Keep the former "
+                    "private, and share the latter far-and-wide.",
+                    **fill_kwargs
+                ),
+                textwrap.fill(
+                    "Importantly, you should place your public key on your "
+                    "webserver at:",
+                    **fill_kwargs
+                ),
+                textwrap.fill(
+                    "Note that if you're planning on using DNS, you would do "
+                    "well to implement DNSSec.  If you don't know what this "
+                    "means, you should probably stick with using the https:// "
+                    "option.",
+                    **fill_kwargs
+                )
+            ),
+            "green"
+        )
 
     @classmethod
     def sign(cls, args: argparse.Namespace):
 
         if not args.url:
-            cprint(
-                "\n  You must specify the public key URL either in the "
-                "environment as \n  ALETHEIA_PUBLIC_KEY_URL or on the command "
-                "line as the second argument.\n",
-                "red"
+            cls.__print_error(
+                "You must specify the public key URL either in the "
+                "environment as ALETHEIA_PUBLIC_KEY_URL or on the command "
+                "line as the second argument."
             )
             return 3
 
         try:
             sign(args.path, args.url)
         except FileNotFoundError:
-            cprint(
-                "\n  Aletheia can't find that file\n",
-                "red"
-            )
+            cls.__print_error("Aletheia can't find that file")
             return 1
         except UnknownFileTypeError:
-            cprint(
-                "\n  Aletheia doesn't know how to sign that file type\n",
-                "red"
-            )
+            cls.__print_error(
+                "Aletheia doesn't know how to sign that file type")
             return 2
         except DependencyMissingError as e:
-            message = textwrap.fill(
-                str(e), initial_indent="  ", subsequent_indent="  ")
-            cprint(f"\n{message}\n", "red")
-            return 3
+            cls.__print_error(str(e))
+            return 4
         template = "\n  ✔  {} was signed with your private key\n"
         cprint(template.format(args.path), "green")
 
@@ -227,54 +248,44 @@ class Command:
         try:
             domain = verify(args.path)
         except FileNotFoundError:
-            cprint(
-                "\n  Aletheia can't find that file\n",
-                "red"
-            )
+            cls.__print_error("Aletheia can't find that file")
             return 1
         except UnknownFileTypeError:
-            cprint(
-                "\n  Aletheia doesn't recognise that file type\n",
-                "red"
-            )
+            cls.__print_error("Aletheia doesn't recognise that file type")
             return 2
         except UnparseableFileError:
-            cprint(
-                "\n  Aletheia can't find a signature in that file\n",
-                "red"
-            )
+            cls.__print_error("Aletheia can't find a signature in that file")
             return 3
         except InvalidURLError:
-            cprint(
-                "\n  The public key URL in the file provided is invalid\n",
-                "red"
-            )
+            cls.__print_error(
+                "The public key URL in the file provided is invalid")
             return 4
         except PublicKeyNotExistsError:
-            cprint(
-                "\n  The URL contained in the file header either can't be "
-                "accessed, or does not contain a public key\n",
-                "red"
+            cls.__print_error(
+                "The public key location contained in the file header either "
+                "can't be accessed, or does not contain a public key",
             )
             return 5
         except InvalidSignature:
-            cprint("\n  There's something wrong with that file\n", "red")
+            cls.__print_error("There's something wrong with that file")
             return 6
         except DependencyMissingError as e:
-            message = textwrap.fill(
-                str(e), initial_indent="  ", subsequent_indent="  ")
-            cprint(f"\n{message}\n", "red")
+            cls.__print_error(str(e))
             return 7
         except UnacceptableLocationError as e:
-            message = textwrap.fill(
-                str(e), initial_indent="  ", subsequent_indent="  ")
-            cprint(f"\n{message}\n", "red")
+            cls.__print_error(str(e))
             return 8
 
         template = "\n  ✔  The file is verified as having originated at {}\n"
         cprint(template.format(domain), "green")
 
         return 0
+
+    @staticmethod
+    def __print_error(message):
+        message = textwrap.fill(
+            message, initial_indent="  ", subsequent_indent="  ", width=79)
+        cprint("\n{}\n".format(message), "red")
 
 
 if __name__ == "__main__":
