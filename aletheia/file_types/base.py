@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import tempfile
 import urllib.parse
+from collections import OrderedDict
 
 import magic
 import requests
@@ -15,7 +16,10 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, utils
-from collections import OrderedDict
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateKey,
+    RSAPublicKey
+)
 
 from ..common import LoggingMixin
 from ..exceptions import (
@@ -34,11 +38,9 @@ class File(LoggingMixin):
 
     SCHEMA_VERSION = 1
 
-    def __init__(self, source, public_key_cache: str):
+    def __init__(self, source: str, public_key_cache: str):
         """
-        :param source: Typically this will be a file path, but some modules may
-               support other types as well.  See ``images.JpegFile`` for an
-               example.
+        :param source: A file path
         :param public_key_cache: The location on-disk where you're caching
                public keys that have been downloaded for use in verification.
         """
@@ -65,7 +67,7 @@ class File(LoggingMixin):
         :return: An instance of the relevant File subclass
         """
 
-        mimetype = cls._guess_mimetype(path)
+        mimetype = cls.__guess_mimetype(path)
         for klass in cls.get_subclasses():
             if mimetype in klass.SUPPORTED_TYPES:
                 return klass(path, public_key_cache)
@@ -109,7 +111,7 @@ class File(LoggingMixin):
         """
         raise NotImplementedError()
 
-    def generate_signature(self, private_key) -> bytes:
+    def generate_signature(self, private_key: RSAPrivateKey) -> bytes:
         """
         Use the private key to generate a signature from raw image data.
 
@@ -209,7 +211,7 @@ class File(LoggingMixin):
         )
 
     @staticmethod
-    def _guess_mimetype(path) -> str:
+    def __guess_mimetype(path: str) -> str:
         """
         We use the file-magic module to get this value, but if that returns a
         type that doesn't mean anything to us, we fall back to guessing based
@@ -372,7 +374,7 @@ class FFmpegFile(File):
             key_url = payload["public-key"]
             signature = payload["signature"]
 
-        except (ValueError, TypeError, IndexError, json.JSONDecodeError):
+        except (ValueError, TypeError, IndexError, json.JSONDecodeError) as e:
             raise UnparseableFileError("Invalid format, or no signature found")
 
         return self.verify_signature(key_url, signature)

@@ -1,7 +1,7 @@
 #
 #   $ aletheia --version
-#   $ aletheia public-key [--url] [--format=[pem|openssh]]
-#   $ aletheia private-key [--format=[pem|openssh]]
+#   $ aletheia public-key [--url=<url>] [--format=<pem|openssh>]
+#   $ aletheia private-key
 #   $ aletheia generate
 #   $ aletheia sign /path/to/file public-key-url
 #   $ aletheia verify /path/to/file
@@ -38,7 +38,12 @@ class Command:
         self.parser.set_defaults(func=self.parser.print_help)
 
         self.parser.add_argument(
-            "--version", dest="version", action="store_true", default=False)
+            "--version",
+            dest="version",
+            action="store_true",
+            default=False,
+            help="Display the version and exit"
+        )
 
         subparsers = self.parser.add_subparsers(dest="subcommand")
 
@@ -48,24 +53,29 @@ class Command:
                  "party verification. (Do this first)"
         )
 
-        subparsers.add_parser(
-            "private-key", help="Get your private key")
+        subparsers.add_parser("private-key", help="Print out your private key")
 
         parser_public_key = subparsers.add_parser(
-            "public-key", help="Get your public key")
+            "public-key", help="Print out your public key")
         parser_public_key.add_argument(
-            "--url", default=os.getenv("ALETHEIA_PUBLIC_KEY_URL"))
+            "--url",
+            help="The URL from where you want to fetch the public key you "
+                 "want to output & format."
+        )
         parser_public_key.add_argument(
             "--format",
             dest="format",
             default="pem",
-            choices=("pem", "openssh")
+            choices=("pem", "openssh"),
+            help="The format of your key.  PEM is the default, but if you're "
+                 "planning on storing your public key in a DNS TXT record, "
+                 "you should be using the OpenSSH format."
         )
 
         parser_sign = subparsers.add_parser("sign", help="Sign a file")
         parser_sign.add_argument("path")
         parser_sign.add_argument(
-            "url", nargs="?", default=os.getenv("ALETHEIA_PUBLIC_KEY_URL"))
+            "url", nargs="?", default=os.getenv("ALETHEIA_DOMAIN"))
 
         parser_verify = subparsers.add_parser(
             "verify", help="Verify the origin of a file")

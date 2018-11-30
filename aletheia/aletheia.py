@@ -35,10 +35,9 @@ class Aletheia(LoggingMixin):
             self.public_key_cache
         )
 
-    def generate(self):
+    def generate(self) -> None:
         """
         Generate a public and private key pair and store them on-disk.
-        :return: None
         """
 
         os.makedirs(
