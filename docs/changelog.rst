@@ -24,6 +24,7 @@ only one of two places:
 
 A few other features were added as well:
 
+* All keys are now using SHA512 instead of the previous SHA256.
 * You can now call ``aletheia public-key`` to display your public key.
   Similarly, you can call ``aletheia public-key --format=openssh`` for the
   aforementioned OpenSSH formatting required for DNS storage.

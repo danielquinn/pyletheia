@@ -127,10 +127,10 @@ class File(LoggingMixin):
         return binascii.hexlify(private_key.sign(
             self.get_raw_data(),
             padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
+                mgf=padding.MGF1(hashes.SHA512()),
                 salt_length=padding.PSS.MAX_LENGTH
             ),
-            hashes.SHA256()
+            hashes.SHA512()
         ))
 
     def generate_payload(self, domain: str, signature: bytes):
@@ -166,10 +166,10 @@ class File(LoggingMixin):
                 binascii.unhexlify(signature),
                 self.get_raw_data(),
                 padding.PSS(
-                    mgf=padding.MGF1(hashes.SHA256()),
+                    mgf=padding.MGF1(hashes.SHA512()),
                     salt_length=padding.PSS.MAX_LENGTH
                 ),
-                hashes.SHA256()
+                hashes.SHA512()
             )
         except (InvalidSignature, binascii.Error):
             self.logger.error("Bad signature")
