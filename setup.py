@@ -42,7 +42,7 @@ def make_aur():
 
     template = """
         # Maintainer: Daniel Quinn <archlinux at danielquinn dot org>
-        
+
         pkgname="python-aletheia"
         pkgver=VERSION
         pkgrel=1
@@ -62,19 +62,19 @@ def make_aur():
         'python-termcolor')
         source=("https://files.pythonhosted.org/packages/source/${_name::1}/${_name}/${_name}-${pkgver}.tar.gz")
         sha512sums=('HASH')
-        
+
         build() {
             cd "${srcdir}/${_name}-${pkgver}"
             python setup.py build
         }
-        
+
         package() {
             cd "${srcdir}/${_name}-${pkgver}"
             python setup.py install --root="${pkgdir}/" --optimize=1 --skip-build
             install -Dm 644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
             install -Dm 644 README.rst "${pkgdir}/usr/share/doc/${pkgname}/README"
         }
-    """
+    """  # NOQA: E501
     sys.stdout.write(template.replace(
         "VERSION",
         version

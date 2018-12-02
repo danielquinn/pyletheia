@@ -27,7 +27,7 @@ external programs:
 * `FFmpeg`_: used to read & write audio & video files.
 * `exiftool`_: used to read & write image files.
 
-The Installing both of these is easy on any platform though, even Windows ;-)
+Installing both of these is easy on any platform though, even Windows ;-)
 
 The download & installation instructions for your operating system of choice
 can be found on their respective project pages.  Once that's finished, and you

@@ -6,12 +6,12 @@ Troubleshooting
 FFmpeg
 ======
 
-With the exception of image processing, all of Aletheia's functions require a
-working installation of `FFmpeg`_.  Thankfully, this program is Free software
-and is available for all major platforms out there.  Installing it should be
-relatively easy, but if Aletheia is complaining about how you don't have it
-installed even after you're *sure* you did, note that FFmpeg must be installed
-and available in your system ``PATH``.
+A lot of Aletheia's functions require a working installation of `FFmpeg`_.
+Thankfully, this program is Free software and is available for all major
+platforms out there.  Installing it should be relatively easy, but if Aletheia
+is complaining about how you don't have it installed even after you're *sure*
+you installed it, note that FFmpeg must be installed and available in your
+system ``PATH``.
 
 .. _FFmpeg: https://ffmpeg.org/
 
@@ -32,5 +32,5 @@ of what directory you're in, you should see something like this::
 
 If you see ``command not found`` or ``Bad command or file name``, then either
 FFmpeg isn't installed, or it's not in your ``PATH``.  You'll have to talk to
-someone who knows more about your operating system than I do to figure out how
-to get that to work.
+someone who knows more about your operating system to figure out how to get
+that to work.

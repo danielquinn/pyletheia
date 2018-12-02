@@ -2,6 +2,7 @@ import logging
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 
 from .exceptions import UnrecognisedKey
 
@@ -26,7 +27,7 @@ class LoggingMixin:
         return self.logger
 
 
-def get_key(data: bytes):
+def get_key(data: bytes) -> RSAPublicKey:
     """
     Given an arbitrary string in a variety of formats, return a key object.
     """

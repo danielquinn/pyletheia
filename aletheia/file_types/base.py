@@ -96,10 +96,8 @@ class File(LoggingMixin):
 
           {"version": int, "public-key": url, "signature": signature}
 
-        :param private_key     key  The private key used for signing
-        :param public_key_url  str  The URL where you're storing the public key
-
-        :return None
+        Typically this involves a call to ``File.generate_payload()`` which
+        does all of the heavy-lifting for you.
         """
         raise NotImplementedError()
 
@@ -107,16 +105,12 @@ class File(LoggingMixin):
         """
         Attempt to verify the origin of a file by checking its local signature
         against the public key listed in the file.
-        :return: str  The domain from which the file originates.
         """
         raise NotImplementedError()
 
     def generate_signature(self, private_key: RSAPrivateKey) -> bytes:
         """
         Use the private key to generate a signature from raw image data.
-
-        :param private_key: The private key with which we sign the data.
-        :return: str  A signature, encoded with hexlify
         """
         return binascii.hexlify(private_key.sign(
             self.get_raw_data(),
@@ -147,9 +141,6 @@ class File(LoggingMixin):
         from the local cache to verify the signature against the image data.
         This method returns the domain of the verified server on success, and
         raises an InvalidSignature on failure.
-
-        :param key_url: The URL for the public key we'll use to verify the file
-        :param signature: The signature found in the file
         """
 
         try:
@@ -172,8 +163,6 @@ class File(LoggingMixin):
         """
         Attempt to fetch the public key from the local cache, and if it's not
         in there, fetch it from the internetz and put it in there.
-        :param url: The URL for the public key's location
-        :return: The public key
         """
 
         if not url:
