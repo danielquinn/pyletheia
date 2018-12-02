@@ -57,6 +57,7 @@ def make_aur():
         'python'
         'python-setuptools'
         'python-cryptography'
+        'python-dnspython'
         'python-magic'
         'python-requests'
         'python-termcolor')
