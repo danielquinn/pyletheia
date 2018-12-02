@@ -61,9 +61,14 @@ OpenSSH format.  So, the first step is to get your public key in said format:
 
     $ aletheia public-key --format=openssh
 
-Copy & paste the output of this command into a TXT record for your domain.
+Copy & paste the output of this command into a TXT record for your domain,
+prefixing it with `aletheia-public-key=`.  The result should look something
+like this:
+
+    example.com.	3599	IN	TXT	"aletheia-public-key=ssh-rsa AAAAB3NzaC1yc2E...
+
 Note that there's an RFC that requires that TXT records not exceed a length of
-255 characters, but the work around is to store the single key as a series of
+255 characters, but the work-around is to store the single key as a series of
 strings on the same record.  If you're curious about what this looks like, make
 sure you've got ``dig`` installed and have a look at ``danielquinn.org``:
 
