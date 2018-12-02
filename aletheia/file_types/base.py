@@ -306,8 +306,19 @@ class File(LoggingMixin):
 class LargeFile(File):
     """
     For larger files like audio & video, the signature methods are a little
-    different so we don't end up busting our RAM limits.
+    different so we don't end up busting our RAM limits.  This isn't used at
+    the moment, but as we expand the number of supported formats, it may come
+    in handy.
     """
+
+    def get_raw_data(self):
+        return super().get_raw_data()
+
+    def sign(self, private_key, domain: str):
+        return super().sign(private_key, domain)
+
+    def verify(self):
+        return super().verify()
 
     def generate_signature(self, private_key) -> bytes:
 
