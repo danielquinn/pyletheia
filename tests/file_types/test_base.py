@@ -37,22 +37,11 @@ def get_dns_friendly_key() -> List[bytes]:
         os.path.dirname(os.path.dirname(__file__)),
         "data",
         "keys",
-        "public.pub"
+        "public.openssh"
     )
     with open(path, "rb") as f:
-        return [bytes(__, "utf-8") for __ in textwrap.wrap(
-            "{}={}".format(
-                "aletheia-public-key",
-                serialization.load_pem_public_key(
-                    f.read().strip(),
-                    backend=default_backend()
-                ).public_bytes(
-                    encoding=serialization.Encoding.OpenSSH,
-                    format=serialization.PublicFormat.OpenSSH
-                ).decode().strip()
-            ),
-            255
-        )]
+        key = "{}={}".format("aletheia-public-key", f.read().decode().strip())
+        return [bytes(__, "utf-8") for __ in textwrap.wrap(key, 255)]
 
 
 def get_http_friendly_key() -> bytes:
@@ -86,7 +75,10 @@ def get_good_key() -> RSAPublicKey:
 class FileTestCase(TestCase):
 
     GOOD_DNS = mock.Mock(
-        response=mock.Mock(answer=[[mock.Mock(strings=get_dns_friendly_key())]]))
+        response=mock.Mock(
+            answer=[[mock.Mock(strings=get_dns_friendly_key())]]
+        )
+    )
     GOOD_HTTP = mock.Mock(content=get_http_friendly_key(), status_code=200)
     GOOD_KEY = get_good_key()
 
@@ -222,11 +214,51 @@ class FileTestCase(TestCase):
     @mock.patch("aletheia.file_types.base.dns.resolver.query", return_value=GOOD_DNS)
     @mock.patch("aletheia.file_types.base.requests.get", return_value=GOOD_HTTP)
     @mock.patch("aletheia.file_types.base.get_key", return_value=GOOD_KEY)
-    def test__get_public_key_yes_dns_yes_http(self,m_get_key, m_requests, m_dns):
+    def test__get_public_key_yes_dns_yes_http(self, m_get_key, m_requests, m_dns):
         self.assertEqual(File("/dev/null", self.scratch)._get_public_key("example.com"), self.GOOD_KEY)
         self.assertEqual(m_get_key.call_count, 1)
         self.assertEqual(m_requests.call_count, 0)
         self.assertEqual(m_dns.call_count, 1)
+
+    @mock.patch("aletheia.file_types.base.dns.resolver.query", return_value=GOOD_DNS)
+    @mock.patch("aletheia.file_types.base.requests.get", side_effect=RequestException)
+    @mock.patch("aletheia.file_types.base.get_key", return_value=GOOD_KEY)
+    def test__get_public_key_cache_works(self, m_get_key, m_requests, m_dns):
+
+        f = File("/dev/null", self.scratch)
+
+        self.assertEqual(f._get_public_key("example.com"), self.GOOD_KEY)
+        self.assertEqual(m_get_key.call_count, 1)
+        self.assertEqual(m_requests.call_count, 0)
+        self.assertEqual(m_dns.call_count, 1)
+
+        self.assertEqual(f._get_public_key("example.com"), self.GOOD_KEY)
+        self.assertEqual(m_get_key.call_count, 2)
+        self.assertEqual(m_requests.call_count, 0)
+        self.assertEqual(m_dns.call_count, 1)
+
+        self.assertEqual(f._get_public_key("example.com", use_cache=False), self.GOOD_KEY)
+        self.assertEqual(m_get_key.call_count, 3)
+        self.assertEqual(m_requests.call_count, 0)
+        self.assertEqual(m_dns.call_count, 2)
+
+    @mock.patch("aletheia.file_types.base.dns.resolver.query", return_value=GOOD_DNS)
+    @mock.patch("aletheia.file_types.base.requests.get", side_effect=RequestException)
+    @mock.patch("aletheia.file_types.base.get_key", return_value=GOOD_KEY)
+    def test__get_public_key_cache_invalidates(self, m_get_key, m_requests, m_dns):
+
+        f = File("/dev/null", self.scratch)
+        f.CACHE_TIME = 0
+
+        self.assertEqual(f._get_public_key("example.com"), self.GOOD_KEY)
+        self.assertEqual(m_get_key.call_count, 1)
+        self.assertEqual(m_requests.call_count, 0)
+        self.assertEqual(m_dns.call_count, 1)
+
+        self.assertEqual(f._get_public_key("example.com"), self.GOOD_KEY)
+        self.assertEqual(m_get_key.call_count, 2)
+        self.assertEqual(m_requests.call_count, 0)
+        self.assertEqual(m_dns.call_count, 2)
 
     def _generate_path(self, type_: str) -> str:
         return os.path.join(self.DATA, "original", "test.{}".format(type_))

@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 from collections import OrderedDict
 from typing import Union
 
@@ -41,6 +42,7 @@ class File(LoggingMixin):
     """
 
     SCHEMA_VERSION = 2
+    CACHE_TIME = 60 * 60  # 1 hour
 
     # Thanks StackOverflow! https://stackoverflow.com/a/26987741/231670
     DOMAIN_REGEX = re.compile(
@@ -190,9 +192,17 @@ class File(LoggingMixin):
         )
 
         if use_cache:
+
             if os.path.exists(cache):
-                with open(cache, "rb") as f:
-                    return get_key(f.read())
+
+                # Cache invalidation based on modified time
+                now = time.time()
+                then = os.path.getmtime(cache)
+                if now - then > self.CACHE_TIME:
+                    os.unlink(cache)
+                else:
+                    with open(cache, "rb") as f:
+                        return get_key(f.read())
 
         key = None
 
