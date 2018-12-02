@@ -60,7 +60,7 @@ class Aletheia(LoggingMixin):
         with open(self.public_key_path, "wb") as f:
             f.write(private_key.public_key().public_bytes(
                 encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
+                format=serialization.PublicFormat.PKCS1
             ))
 
     def sign(self, path: str, domain: str):

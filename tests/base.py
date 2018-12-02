@@ -34,13 +34,13 @@ class TestCase(BaseTestCase):
             return load_pem_private_key(f.read(), None, default_backend())
 
     def get_public_key(self):
-        with open(os.path.join(self.DATA, "keys", "public.pub"), "rb") as f:
+        with open(os.path.join(self.DATA, "keys", "public.pkcs1"), "rb") as f:
             return load_pem_public_key(f.read(), default_backend())
 
     def cache_public_key(self) -> str:
         cache = os.path.join(self.scratch, "public-keys")
         shutil.copy(
-            os.path.join(self.DATA, "keys", "public.pub"),
+            os.path.join(self.DATA, "keys", "public.pkcs1"),
             os.path.join(cache, self.EXAMPLE_DOT_COM)
         )
         return cache

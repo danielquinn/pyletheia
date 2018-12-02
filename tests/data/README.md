@@ -7,8 +7,7 @@ the public & private keys here, eh? 🍁
 ## An explanation regarding the naming convention:
 
 * `keys/private.pem`: A private key, used exclusivly for testing
-* `keys/public.pub`: The associated public key
-* `keys/public.pkcs1`: The same public key in PKCS1 format
+* `keys/public.pkcs1`: The associated public key in PKCS1 format
 * `keys/public.openssh`: The same public key in OpenSSH format
 * `original/test.<extension>`: A plain file, untouched by Aletheia
 * `signed/test.<extension>`: A copy of the original, successfully signed.

@@ -13,8 +13,6 @@ class CommonTestCase(TestCase):
 
     PRIVATE_KEY_PATH = os.path.join(
         os.path.dirname(__file__), "data", "keys", "private.pem")
-    PUBLIC_KEY_PATH = os.path.join(
-        os.path.dirname(__file__), "data", "keys", "public.pub")
     PUBLIC_KEY_OPENSSH_PATH = os.path.join(
         os.path.dirname(__file__), "data", "keys", "public.openssh")
     PUBLIC_KEY_PKCS1_PATH = os.path.join(
@@ -60,21 +58,14 @@ class CommonTestCase(TestCase):
             self.assertTrue(get_key(f.read()))
 
     def test_get_key_public_pkcs1(self):
-        with open(self.PUBLIC_KEY_PATH, "rb") as f:
+        with open(self.PUBLIC_KEY_PKCS1_PATH, "rb") as f:
             self.assertTrue(get_key(f.read()))
 
     def test_get_key_public_openssh(self):
         with open(self.PUBLIC_KEY_OPENSSH_PATH, "rb") as f:
             self.assertTrue(get_key(f.read()))
 
-    def test_get_key_public_subject_public_key_info(self):
-        with open(self.PUBLIC_KEY_PKCS1_PATH, "rb") as f:
-            self.assertTrue(get_key(f.read()))
-
     def test_public_keys_are_equivalent(self):
-
-        with open(self.PUBLIC_KEY_PATH, "rb") as f:
-            pub = get_key(f.read())
 
         with open(self.PUBLIC_KEY_OPENSSH_PATH, "rb") as f:
             openssh = get_key(f.read())
@@ -89,11 +80,9 @@ class CommonTestCase(TestCase):
         algorithm = hashes.SHA256()
 
         self.assertIsNone(
-            pub.verify(self.SIGNATURE, b"test", _padding, algorithm))
+            pkcs1.verify(self.SIGNATURE, b"test", _padding, algorithm))
         self.assertIsNone(
             openssh.verify(self.SIGNATURE, b"test", _padding, algorithm))
-        self.assertIsNone(
-            pkcs1.verify(self.SIGNATURE, b"test", _padding, algorithm))
 
     def test_get_key_unknown(self):
         self.assertRaises(UnrecognisedKey, get_key, b"asdf")

@@ -42,9 +42,6 @@ def get_key(data: bytes) -> RSAPublicKey:
     if data.startswith(b"-----BEGIN RSA PUBLIC KEY-----"):
         return serialization.load_pem_public_key(data, **kwargs)
 
-    if data.startswith(b"-----BEGIN PUBLIC KEY-----"):
-        return serialization.load_pem_public_key(data, **kwargs)
-
     if data.startswith(b"ssh-rsa "):
         return serialization.load_ssh_public_key(data, **kwargs)
 

@@ -50,7 +50,7 @@ def get_http_friendly_key() -> bytes:
         os.path.dirname(os.path.dirname(__file__)),
         "data",
         "keys",
-        "public.pub"
+        "public.pkcs1"
     )
 
     with open(path, "rb") as f:
@@ -63,7 +63,7 @@ def get_good_key() -> RSAPublicKey:
         os.path.dirname(os.path.dirname(__file__)),
         "data",
         "keys",
-        "public.pub"
+        "public.pkcs1"
     )
     with open(path, "rb") as f:
         return serialization.load_pem_public_key(
