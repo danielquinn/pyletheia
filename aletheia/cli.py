@@ -21,7 +21,6 @@ from .aletheia import Aletheia
 from .common import get_key
 from .exceptions import (
     DependencyMissingError,
-    InvalidURLError,
     PublicKeyNotExistsError,
     UnacceptableLocationError,
     UnknownFileTypeError,
@@ -266,10 +265,7 @@ class Command:
         except UnparseableFileError:
             cls.__print_error("Aletheia can't find a signature in that file")
             return 3
-        except InvalidURLError:
             cls.__print_error(
-                "The public key URL in the file provided is invalid")
-            return 4
         except PublicKeyNotExistsError:
             cls.__print_error(
                 "The public key location contained in the file header either "

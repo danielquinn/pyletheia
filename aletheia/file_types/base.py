@@ -27,7 +27,6 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
 from ..common import LoggingMixin, get_key
 from ..exceptions import (
     DependencyMissingError,
-    InvalidURLError,
     PublicKeyNotExistsError,
     UnacceptableLocationError,
     UnknownFileTypeError,
@@ -257,9 +256,6 @@ class File(LoggingMixin):
 
     def __get_public_key_from_url(self,
                                   domain: str) -> Union[RSAPublicKey, None]:
-
-        if not domain:
-            raise InvalidURLError()
 
         url = "https://{}/aletheia.pub".format(domain)
         try:
