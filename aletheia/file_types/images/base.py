@@ -81,7 +81,8 @@ class ImageFile(File):
                     stderr=subprocess.PIPE
                 ).communicate()[0].decode())
 
-                key_url = data["domain"]
+                version = data["version"]
+                domain = data["domain"]
                 signature = data["signature"]
 
             except FileNotFoundError:
@@ -97,4 +98,6 @@ class ImageFile(File):
 
         self.logger.debug("Signature found: %s", signature)
 
-        return self.verify_signature(key_url, signature)
+        self.check_schema_version(version)
+
+        return self.verify_signature(domain, signature)

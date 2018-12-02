@@ -29,6 +29,8 @@ A few other features were added as well:
   Similarly, you can call ``aletheia public-key --format=openssh`` for the
   aforementioned OpenSSH formatting required for DNS storage.
 * You can also call ``aletheia private-key`` to display your private key.
+* We now check the schema version in the verification step and error out if the
+  version is in the future.
 
 
 1.1.0

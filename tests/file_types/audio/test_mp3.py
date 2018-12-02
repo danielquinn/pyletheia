@@ -71,6 +71,10 @@ class Mp3TestCase(TestCase):
         f = Mp3File(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
+    def test_verify_future_version(self):
+        path = self.copy_for_work("future", "mp3")
+        self.assertRaises(UnparseableFileError, Mp3File(path, "").verify)
+
     def test_verify_from_path(self):
 
         path = self.copy_for_work("signed", "mp3")

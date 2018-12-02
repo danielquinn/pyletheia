@@ -71,6 +71,10 @@ class MkvTestCase(TestCase):
         f = MkvFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
+    def test_verify_future_version(self):
+        path = self.copy_for_work("future", "mkv")
+        self.assertRaises(UnparseableFileError, MkvFile(path, "").verify)
+
     def test_verify_from_path(self):
 
         path = self.copy_for_work("signed", "mkv")

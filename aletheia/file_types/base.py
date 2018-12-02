@@ -147,6 +147,14 @@ class File(LoggingMixin):
 
         return json.dumps(r, separators=(",", ":"))
 
+    def check_schema_version(self, version):
+
+        if version > self.SCHEMA_VERSION:
+            raise UnparseableFileError(
+                "This file was signed by a more modern version of Aletheia. "
+                "You'll need to upgrade to verify it."
+            )
+
     def verify_signature(self, domain: str, signature: bytes):
         """
         Use the public key (found either by fetching it online or pulling it
@@ -427,6 +435,7 @@ class FFmpegFile(File):
 
             self.logger.debug("Found payload: %s", payload)
 
+            version = payload["version"]
             domain = payload["domain"]
             signature = payload["signature"]
 
@@ -438,6 +447,8 @@ class FFmpegFile(File):
                 json.JSONDecodeError
         ):
             raise UnparseableFileError("Invalid format, or no signature found")
+
+        self.check_schema_version(version)
 
         return self.verify_signature(domain, signature)
 

@@ -68,3 +68,7 @@ class HtmlTestCase(TestCase):
         f = HtmlFile(path, "")
         f.verify_signature = mock.Mock(return_value=True)
         self.assertTrue(f.verify())
+
+    def test_verify_future_version(self):
+        path = self.copy_for_work("future", "html")
+        self.assertRaises(UnparseableFileError, HtmlFile(path, "").verify)

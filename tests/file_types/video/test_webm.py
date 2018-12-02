@@ -71,6 +71,10 @@ class WebmTestCase(TestCase):
         f = WebmFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
+    def test_verify_future_version(self):
+        path = self.copy_for_work("future", "webm")
+        self.assertRaises(UnparseableFileError, WebmFile(path, "").verify)
+
     def test_verify_from_path(self):
 
         path = self.copy_for_work("signed", "webm")

@@ -44,8 +44,11 @@ class PlainTextFile(File):
                 self.logger.warning("Invalid format, or no signature found")
                 raise UnparseableFileError
 
+        version = int(m.group("version"))
         domain = m.group("domain")
         signature = m.group("signature").encode()
+
+        self.check_schema_version(version)
 
         self.logger.debug("Signature found: %s", signature)
 

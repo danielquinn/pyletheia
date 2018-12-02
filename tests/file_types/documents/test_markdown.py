@@ -61,6 +61,10 @@ class MarkdownTestCase(TestCase):
         f = MarkdownFile(path, cache)
         self.assertRaises(UnparseableFileError, f.verify)
 
+    def test_verify_future_version(self):
+        path = self.copy_for_work("future", "md")
+        self.assertRaises(UnparseableFileError, MarkdownFile(path, "").verify)
+
     def test_verify(self):
 
         path = self.copy_for_work("signed", "md")

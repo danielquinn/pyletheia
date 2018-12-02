@@ -66,6 +66,10 @@ class PngTestCase(TestCase):
         f = JpegFile(path, cache)
         self.assertRaises(InvalidSignature, f.verify)
 
+    def test_verify_future_version(self):
+        path = self.copy_for_work("future", "png")
+        self.assertRaises(UnparseableFileError, JpegFile(path, "").verify)
+
     def test_verify(self):
 
         path = self.copy_for_work("signed", "png")
