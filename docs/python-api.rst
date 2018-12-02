@@ -39,7 +39,7 @@ Like generating, signing is done with a single function.  The only difference
 is that you must pass in two arguments:
 
 * The path to the file you want to sign
-* The URL for where you're storing your public key
+* The domain to which you're ascribing authorship
 
 Have a look at :ref:`commandline-api-sign` for an explanation as to the
 importance of that second argument:
@@ -48,7 +48,7 @@ importance of that second argument:
 
     from aletheia.utils import sign
 
-    sign("/path/to/file.jpg", "https://my-website.com/aletheia.pub")
+    sign("/path/to/file.jpg", "my-website.com")
 
 
 Bulk Signing
@@ -63,7 +63,7 @@ by using ``sign_bulk()``:
 
     sign_bulk(
         ("/path/to/file.jpg", "/path/to/file.mkv", "/path/to/file.html"),
-        "https://my-website.com/aletheia.pub"
+        "my-website.com"
     )
 
 
@@ -82,9 +82,10 @@ a function:
     verify("/path/to/file.jpg")
 
 
-This will attempt to fetch the URL stored in the file and then use that public
-key to verify the file.  If you don't have an internet connection available,
-and the public key hasn't already been cached, this process will fail.
+This will attempt to fetch the public key from the domain stored in the file
+and then use that public key to verify the file.  If you don't have an internet
+connection available, and the public key hasn't already been cached, this
+process will fail.
 
 
 Bulk Verification
@@ -126,7 +127,7 @@ Examples
     )
     sign(
         "/path/to/file.jpg",
-        "https://my-website.com/aletheia.pub",
+        "my-website.com",
         private_key_path="/path/to/private-key.pem"
     )
     verify(

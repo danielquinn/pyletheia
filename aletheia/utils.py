@@ -5,8 +5,8 @@
 #
 #   generate()
 #
-#   sign(path, public_key_url)
-#   sign_bulk(paths, public_key_url)
+#   sign(path, domain)
+#   sign_bulk(paths, domain)
 #
 #   verify(path)
 #   verify_bulk(paths)
@@ -25,24 +25,24 @@ def generate(**kwargs):  # pragma: nocov
     Aletheia(**kwargs).generate()
 
 
-def sign(path, public_key_url, **kwargs):  # pragma: nocov
+def sign(path, domain, **kwargs):  # pragma: nocov
     """
     Attempts to sign an file with your private key.  If you provide a
     ``private_key_path``, Aletheia will look for it there, otherwise it will
     look for it in the environment under ``ALETHEIA_PRIVATE_KEY``, and failing
     that, assume ``${ALETHEIA_HOME}/.aletheia/aletheia.pem``.
     """
-    Aletheia(**kwargs).sign(path, public_key_url)
+    Aletheia(**kwargs).sign(path, domain)
 
 
-def sign_bulk(paths, public_key_url, **kwargs):  # pragma: nocov
+def sign_bulk(paths, domain, **kwargs):  # pragma: nocov
     """
     Does what ``sign()`` does, but for lots of files, saving you the setup &
     teardown time for key handling.
     """
     aletheia = Aletheia(**kwargs)
     for path in paths:
-        aletheia.sign(path, public_key_url)
+        aletheia.sign(path, domain)
 
 
 def verify(path, **kwargs):  # pragma: nocov

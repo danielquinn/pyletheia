@@ -63,7 +63,7 @@ class Aletheia(LoggingMixin):
                 format=serialization.PublicFormat.SubjectPublicKeyInfo
             ))
 
-    def sign(self, path: str, public_key_url: str):
+    def sign(self, path: str, domain: str):
 
         if not os.path.exists(path):
             raise FileNotFoundError(
@@ -72,7 +72,7 @@ class Aletheia(LoggingMixin):
 
         File.build(path, self.public_key_cache).sign(
             self._get_private_key(),
-            public_key_url
+            domain
         )
 
     def verify(self, path: str):

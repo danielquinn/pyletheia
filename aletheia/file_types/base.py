@@ -7,9 +7,11 @@ import re
 import shutil
 import subprocess
 import tempfile
-import urllib.parse
 from collections import OrderedDict
+from typing import Union
 
+import dns.exception
+import dns.resolver
 import magic
 import requests
 from cryptography.exceptions import InvalidSignature
@@ -21,13 +23,15 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPublicKey
 )
 
-from ..common import LoggingMixin
+from ..common import LoggingMixin, get_key
 from ..exceptions import (
     DependencyMissingError,
     InvalidURLError,
     PublicKeyNotExistsError,
+    UnacceptableLocationError,
     UnknownFileTypeError,
-    UnparseableFileError
+    UnparseableFileError,
+    UnrecognisedKey
 )
 
 
@@ -36,7 +40,13 @@ class File(LoggingMixin):
     The base class for any type of file we want to sign.
     """
 
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
+
+    # Thanks StackOverflow! https://stackoverflow.com/a/26987741/231670
+    DOMAIN_REGEX = re.compile(
+        r"^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*"
+        r"(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$"
+    )
 
     def __init__(self, source: str, public_key_cache: str):
         """
@@ -88,13 +98,13 @@ class File(LoggingMixin):
         """
         raise NotImplementedError()
 
-    def sign(self, private_key, public_key_url: str) -> None:
+    def sign(self, private_key, domain: str) -> None:
         """
         Override this method to generate a signature from the raw data of your
         particular file format and write it to the metadata layer in the
         following format:
 
-          {"version": int, "public-key": url, "signature": signature}
+          {"version": int, "domain": domain, "signature": signature}
 
         Typically this involves a call to ``File.generate_payload()`` which
         does all of the heavy-lifting for you.
@@ -121,7 +131,7 @@ class File(LoggingMixin):
             hashes.SHA256()
         ))
 
-    def generate_payload(self, public_key_url: str, signature: bytes):
+    def generate_payload(self, domain: str, signature: bytes):
         """
         Dictionaries are unordered in Python 3.5 and earlier, so to make sure
         the payload is generated in a predictable fashion, we have to use an
@@ -130,12 +140,12 @@ class File(LoggingMixin):
 
         r = OrderedDict()
         r["version"] = self.SCHEMA_VERSION
-        r["public-key"] = public_key_url
+        r["domain"] = domain
         r["signature"] = signature.decode()
 
         return json.dumps(r, separators=(",", ":"))
 
-    def verify_signature(self, key_url: str, signature: bytes):
+    def verify_signature(self, domain: str, signature: bytes):
         """
         Use the public key (found either by fetching it online or pulling it
         from the local cache to verify the signature against the image data.
@@ -143,8 +153,14 @@ class File(LoggingMixin):
         raises an InvalidSignature on failure.
         """
 
+        if not self.DOMAIN_REGEX.match(domain):
+            raise UnacceptableLocationError(
+                'The domain name provided, "{}" does not appear to be '
+                'valid.'.format(domain)
+            )
+
         try:
-            self._get_public_key(key_url).verify(
+            self._get_public_key(domain).verify(
                 binascii.unhexlify(signature),
                 self.get_raw_data(),
                 padding.PSS(
@@ -157,47 +173,88 @@ class File(LoggingMixin):
             self.logger.error("Bad signature")
             raise InvalidSignature()
 
-        return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
+        return domain
 
-    def _get_public_key(self, url: str):
+    def _get_public_key(self,
+                        domain: str, use_cache: bool = True) -> RSAPublicKey:
         """
         Attempt to fetch the public key from the local cache, and if it's not
         in there, fetch it from the internetz and put it in there.
         """
 
-        if not url:
-            raise InvalidURLError()
-
         os.makedirs(self.public_key_cache, exist_ok=True)
 
         cache = os.path.join(
             self.public_key_cache,
-            hashlib.sha512(url.encode("utf-8")).hexdigest()
+            hashlib.sha512(domain.encode("utf-8")).hexdigest()
         )
 
-        if os.path.exists(cache):
-            with open(cache, "rb") as f:
-                return serialization.load_pem_public_key(
-                     f.read(),
-                     backend=default_backend()
-                )
+        if use_cache:
+            if os.path.exists(cache):
+                with open(cache, "rb") as f:
+                    return get_key(f.read())
+
+        key = None
 
         try:
-            response = requests.get(url)
-        except requests.exceptions.RequestException:
+            key = self.__get_public_key_from_dns(domain)
+        except (PublicKeyNotExistsError, UnrecognisedKey):
+            try:
+                key = self.__get_public_key_from_url(domain)
+            except (PublicKeyNotExistsError, UnrecognisedKey):
+                pass  # We fall through below with no key
+
+        if key is None:
             raise PublicKeyNotExistsError(
-                "Can't connect to {} to acquire the public key".format(url)
+                "The public key could not be found at {}".format(domain)
             )
 
-        if response.status_code == 200:
-            if b"BEGIN PUBLIC KEY" in response.content:
-                with open(cache, "wb") as f:
-                    f.write(requests.get(url).content)
-                return self._get_public_key(url)
+        with open(cache, "w") as f:
+            f.write(key.public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            ).decode().strip())
 
-        raise PublicKeyNotExistsError(
-            "The public key could not be found at {}".format(url)
-        )
+        return key
+
+    def __get_public_key_from_dns(self,
+                                  domain: str) -> Union[RSAPublicKey, None]:
+
+        try:
+
+            response = dns.resolver.query(domain, "TXT").response
+            for answer in response.answer:
+                for rdata in answer:
+                    txt = b"".join(rdata.strings)
+                    if txt.startswith(b"aletheia-public-key="):
+                        return get_key(txt[20:])
+
+        except dns.exception.DNSException as e:
+
+            # A DNS/network error broke things
+            self.logger.warning(
+                "The public key could not be found at {} due to the following "
+                "error: {}".format(domain, e)
+            )
+
+    def __get_public_key_from_url(self,
+                                  domain: str) -> Union[RSAPublicKey, None]:
+
+        if not domain:
+            raise InvalidURLError()
+
+        url = "https://{}/aletheia.pub".format(domain)
+        try:
+            print(1)
+            response = requests.get(url)
+            print(2)
+        except requests.exceptions.RequestException:
+            self.logger.warning(
+                "Can't connect to {} to acquire the public key".format(url))
+            return
+
+        if response.status_code == 200:
+            return get_key(response.content)
 
     @staticmethod
     def __guess_mimetype(path: str) -> str:
@@ -260,7 +317,7 @@ class LargeFile(File):
             utils.Prehashed(chosen_hash)
         ))
 
-    def verify_signature(self, key_url, signature):
+    def verify_signature(self, domain: str, signature: str):
 
         block_size = 16 * 1024
 
@@ -274,7 +331,7 @@ class LargeFile(File):
             buffer = raw.read(block_size)
 
         try:
-            self._get_public_key(key_url).verify(
+            self._get_public_key(domain).verify(
                 binascii.unhexlify(signature),
                 hasher.finalize(),
                 padding.PSS(
@@ -287,7 +344,7 @@ class LargeFile(File):
             self.logger.error("Bad signature")
             raise InvalidSignature()
 
-        return re.sub(r":.*", "", urllib.parse.urlparse(key_url).netloc)
+        return domain
 
 
 class FFmpegFile(File):
@@ -330,13 +387,13 @@ class FFmpegFile(File):
                 )
             raise
 
-    def sign(self, private_key, public_key_url) -> None:
+    def sign(self, private_key, domain: str) -> None:
 
         signature = self.generate_signature(private_key)
 
         self.logger.debug("Signature generated: %s", signature)
 
-        payload = self.generate_payload(public_key_url, signature)
+        payload = self.generate_payload(domain, signature)
         scratch = os.path.join(
             tempfile.mkdtemp(prefix="aletheia-"),
             "scratch.{}".format(self._get_suffix())
@@ -360,13 +417,19 @@ class FFmpegFile(File):
 
             self.logger.debug("Found payload: %s", payload)
 
-            key_url = payload["public-key"]
+            domain = payload["domain"]
             signature = payload["signature"]
 
-        except (ValueError, TypeError, IndexError, json.JSONDecodeError) as e:
+        except (
+                ValueError,
+                TypeError,
+                IndexError,
+                KeyError,
+                json.JSONDecodeError
+        ):
             raise UnparseableFileError("Invalid format, or no signature found")
 
-        return self.verify_signature(key_url, signature)
+        return self.verify_signature(domain, signature)
 
     def _get_suffix(self) -> str:
         raise NotImplementedError

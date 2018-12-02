@@ -1,10 +1,10 @@
 #
 #   $ aletheia --version
-#   $ aletheia public-key [--url=<url>] [--format=<pem|openssh>]
+#   $ aletheia public-key [--url=<url>] [--format=<pkcs1|openssh>]
 #   $ aletheia private-key
 #   $ aletheia generate
-#   $ aletheia sign /path/to/file public-key-url
-#   $ aletheia verify /path/to/file
+#   $ aletheia sign </path/to/file> <domain>
+#   $ aletheia verify </path/to/file>
 #
 
 import argparse
@@ -75,7 +75,7 @@ class Command:
         parser_sign = subparsers.add_parser("sign", help="Sign a file")
         parser_sign.add_argument("path")
         parser_sign.add_argument(
-            "url", nargs="?", default=os.getenv("ALETHEIA_DOMAIN"))
+            "domain", nargs="?", default=os.getenv("ALETHEIA_DOMAIN"))
 
         parser_verify = subparsers.add_parser(
             "verify", help="Verify the origin of a file")
@@ -227,16 +227,16 @@ class Command:
     @classmethod
     def sign(cls, args: argparse.Namespace):
 
-        if not args.url:
+        if not args.domain:
             cls.__print_error(
-                "You must specify the public key URL either in the "
-                "environment as ALETHEIA_PUBLIC_KEY_URL or on the command "
-                "line as the second argument."
+                "You must specify the target domain either in the environment "
+                "as ALETHEIA_DOMAIN or on the command line as the second "
+                "argument."
             )
             return 3
 
         try:
-            sign(args.path, args.url)
+            sign(args.path, args.domain)
         except FileNotFoundError:
             cls.__print_error("Aletheia can't find that file")
             return 1

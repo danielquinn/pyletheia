@@ -19,6 +19,7 @@ to confirm that.  Either way, Aletheia can help you out.
    :maxdepth: 2
 
    setup
+   quickstart
    commandline-api
    python-api
    extending

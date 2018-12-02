@@ -68,7 +68,7 @@ program, which you can call like this:
 .. code:: bash
 
     $ aletheia generate
-    $ aletheia sign /path/to/file.jpg https://example.com/aletheia.pub
+    $ aletheia sign /path/to/file.jpg example.com
     $ aletheia verify /path/to/file.jpg
 
 See :ref:`commandline-api` for more information about how to use Aletheia on

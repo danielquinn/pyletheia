@@ -3,6 +3,33 @@
 Changelog
 #########
 
+2.0.0
+=====
+
+Considerable changes have been made to the way we connect a file to a domain.
+While v1.x assigned ownership of a file to a domain based on the existence
+of a public key *anywhere* on that domain, v2.x now introduces further
+restrictions on where that key must be hosted.  This is to prevent hosting
+providers from being implicated by people who have the ability to host files
+on their platform.
+
+The new rules are a lot simpler though.  You can host your public key in
+only one of two places:
+
+1. On your web server at ``https://your-domain.com/aletheia.pub``
+2. In a DNS TXT record for your domain.  In this case, your public key should
+   be stored in OpenSSH format so it all fits on one line.  Have a look at
+   [the DNS record for danielquinn.org](https://www.digwebinterface.com/?hostnames=danielquinn.org&type=TXT&ns=resolver&useresolver=8.8.4.4&nameservers=)
+   if you want an example of what this looks like.
+
+A few other features were added as well:
+
+* You can now call ``aletheia public-key`` to display your public key.
+  Similarly, you can call ``aletheia public-key --format=openssh`` for the
+  aforementioned OpenSSH formatting required for DNS storage.
+* You can also call ``aletheia private-key`` to display your private key.
+
+
 1.1.0
 =====
 

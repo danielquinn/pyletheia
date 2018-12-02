@@ -35,13 +35,13 @@ class ImageFile(File):
             except RuntimeError as e:
                 raise UnparseableFileError(e)
 
-    def sign(self, private_key, public_key_url: str) -> None:
+    def sign(self, private_key, domain: str) -> None:
 
         signature = self.generate_signature(private_key)
 
         self.logger.debug("Signature generated: %s", signature)
 
-        payload = self.generate_payload(public_key_url, signature)
+        payload = self.generate_payload(domain, signature)
 
         try:
 
@@ -81,7 +81,7 @@ class ImageFile(File):
                     stderr=subprocess.PIPE
                 ).communicate()[0].decode())
 
-                key_url = data["public-key"]
+                key_url = data["domain"]
                 signature = data["signature"]
 
             except FileNotFoundError:

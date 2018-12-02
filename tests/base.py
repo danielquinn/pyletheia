@@ -15,8 +15,8 @@ class TestCase(BaseTestCase):
 
     DATA = os.path.join(os.path.dirname(__file__), "data")
 
-    # A hash of https://example.com/aletheia.pub
-    EXAMPLE_DOT_COM = "3a6d1800cf22c948c65cec99d968d75dce1611d765c27d87e5b36df7959be1daebbac32b1007cc0f417912e2cc49245c1d01666270c910451cf4cecead9922e7"  # NOQA: E501
+    # A hash of example.com
+    EXAMPLE_DOT_COM = "020506e9b65ec049e227e0a25dfafa84ebfc8eb366b6ce9731d757ae96ee223a14c0a51d6d8a72d45b71b6c779f2dd58841f29180827096a129145c5bcf608e6"  # NOQA: E501
 
     def __init__(self, *args):
         super(TestCase, self).__init__(*args)

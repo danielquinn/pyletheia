@@ -24,7 +24,7 @@ class PlainTextFile(File):
 
         return self.__raw
 
-    def sign(self, private_key, public_key_url: str) -> None:
+    def sign(self, private_key, domain: str) -> None:
 
         signature = self.generate_signature(private_key)
 
@@ -33,7 +33,7 @@ class PlainTextFile(File):
         with open(self.source, "wb") as f:
             f.write(self.get_raw_data())
             f.write((self.SIGNATURE_WRITE_TEMPLATE.format(
-                self.generate_payload(public_key_url, signature)
+                self.generate_payload(domain, signature)
             )).encode())
 
     def verify(self) -> str:
@@ -44,9 +44,9 @@ class PlainTextFile(File):
                 self.logger.warning("Invalid format, or no signature found")
                 raise UnparseableFileError
 
-        key_url = m.group("public_key")
+        domain = m.group("domain")
         signature = m.group("signature").encode()
 
         self.logger.debug("Signature found: %s", signature)
 
-        return self.verify_signature(key_url, signature)
+        return self.verify_signature(domain, signature)

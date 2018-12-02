@@ -17,7 +17,7 @@ class StackTestCase(TestCase):
     TEST_TYPES = (
         "mp3",
         "html", "md",
-        "gif", "jpg", "png", 
+        "gif", "jpg", "png",
         "mkv", "mp4", "webm"
     )
 
@@ -73,8 +73,8 @@ class StackTestCase(TestCase):
 
                 # Sign the file
 
-                public_key_url = "https://example.com/aletheia.pub"
-                aletheia.sign(file_path, public_key_url)
+                domain = "example.com"
+                aletheia.sign(file_path, domain)
                 with open(source_path, "rb") as original:
                     with open(file_path, "rb") as modified:
                         self.assertNotEqual(
@@ -89,7 +89,7 @@ class StackTestCase(TestCase):
                     os.path.join(
                         self.scratch,
                         "public-keys",
-                        sha512(public_key_url.encode("utf-8")).hexdigest()
+                        sha512(domain.encode("utf-8")).hexdigest()
                     )
                 )
 

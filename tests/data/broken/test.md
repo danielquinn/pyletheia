@@ -27,4 +27,4 @@ Rage, rage against the dying of the light.
 
   -- Dylan Thomas
 
-[//]: # (aletheia:{"version":1,"public-key":"https://example.com/aletheia.pub","signature":"NOT-A-REAL-SIGNATURE"})
+[//]: # (aletheia:{"version":2,"domain":"example.com","signature":"NOT-A-REAL-SIGNATURE"})

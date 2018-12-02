@@ -23,7 +23,6 @@ The priority package formats would be:
 
 * Debian (apt)
 * Redhat (yum)
-* Arch (AUR)
 * Gentoo (ebuild)
 * Homebrew
 
@@ -41,15 +40,20 @@ designed to be very extendable.  Basically you've got three steps:
 
 #. At the very least, your class must define three methods:
 
-   * ``.get_raw_data()``: This should return the "data" portion of the file (as opposed to the metadata).
-   * ``.sign()``: While the actual signature generation and formatting of the metadata is done by the ``File`` class, the ``.sign()`` method needs to define *how* that metadata is written to your file type.
-   * ``.verify()``: Like ``.sign()``, the hard part is done for you.  However you still need to define how we can retrieve the metadata from your file type.
+   * ``.get_raw_data()``: This should return the "data" portion of the file
+     (as opposed to the metadata).
+   * ``.sign()``: While the actual signature generation and formatting of the
+     metadata is done by the ``File`` class, the ``.sign()`` method needs to
+     define *how* that metadata is written to your file type.
+   * ``.verify()``: Like ``.sign()``, the hard part is done for you.  However
+     you still need to define how we can retrieve the metadata from your file
+     type.
 
 #. Write some tests to cover your new file type.
 
 If you're looking for a good place to start for an example, have a look at the
-``HtmlFile`` and ``JpegFile`` classes.  If you need help, just post a question
-to the issue queue.
+``HtmlFile``, ``Mp3File``, and ``JpegFile`` classes.  If you need help, just
+post a question to the issue queue.
 
 
 Porting to another language
