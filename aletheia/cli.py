@@ -262,10 +262,11 @@ class Command:
         except UnknownFileTypeError:
             cls.__print_error("Aletheia doesn't recognise that file type")
             return 2
-        except UnparseableFileError:
-            cls.__print_error("Aletheia can't find a signature in that file")
-            return 3
+        except UnparseableFileError as e:
             cls.__print_error(
+                str(e) or "Aletheia can't find a signature in that file"
+            )
+            return 3
         except PublicKeyNotExistsError:
             cls.__print_error(
                 "The public key location contained in the file header either "
@@ -291,7 +292,7 @@ class Command:
     def __print_error(message):
         message = textwrap.fill(
             message, initial_indent="  ", subsequent_indent="  ", width=79)
-        cprint("\n{}\n".format(message), "red")
+        cprint("\n{}\n".format(message), "red", attrs=("bold",))
 
 
 if __name__ == "__main__":
