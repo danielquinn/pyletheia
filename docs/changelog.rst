@@ -19,8 +19,8 @@ only one of two places:
 1. On your web server at ``https://your-domain.com/aletheia.pub``
 2. In a DNS TXT record for your domain.  In this case, your public key should
    be stored in OpenSSH format so it all fits on one line.  Have a look at
-   [the DNS record for danielquinn.org](https://www.digwebinterface.com/?hostnames=danielquinn.org&type=TXT&ns=resolver&useresolver=8.8.4.4&nameservers=)
-   if you want an example of what this looks like.
+   `the DNS record for danielquinn.org`_ if you want an example of what this
+   looks like.
 
 A few other features were added as well:
 
@@ -31,6 +31,8 @@ A few other features were added as well:
 * You can also call ``aletheia private-key`` to display your private key.
 * We now check the schema version in the verification step and error out if the
   version is in the future.
+
+.. _the DNS record for danielquinn.org: https://www.digwebinterface.com/?hostnames=danielquinn.org&type=TXT&ns=resolver&useresolver=8.8.4.4&nameservers=
 
 
 1.1.0
