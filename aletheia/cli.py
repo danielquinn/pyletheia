@@ -65,11 +65,11 @@ class Command:
         parser_public_key.add_argument(
             "--format",
             dest="format",
-            default="pem",
-            choices=("pem", "openssh"),
-            help="The format of your key.  PEM is the default, but if you're "
-                 "planning on storing your public key in a DNS TXT record, "
-                 "you should be using the OpenSSH format."
+            default="pkcs1",
+            choices=("pkcs1", "openssh"),
+            help="The format of your key.  PKCS1 is the default, but if "
+                 "you're planning on storing your public key in a DNS TXT "
+                 "record, you'll want the OpenSSH format."
         )
 
         parser_sign = subparsers.add_parser("sign", help="Sign a file")
@@ -152,7 +152,7 @@ class Command:
                 key = get_key(f.read())
 
         kwargs = {
-            "pem": {
+            "pkcs1": {
                 "encoding": serialization.Encoding.PEM,
                 "format": serialization.PublicFormat.PKCS1
             },
