@@ -222,7 +222,7 @@ class File(LoggingMixin):
         with open(cache, "w") as f:
             f.write(key.public_bytes(
                 encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
+                format=serialization.PublicFormat.PKCS1
             ).decode().strip())
 
         return key
