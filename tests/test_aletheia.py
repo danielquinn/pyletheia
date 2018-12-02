@@ -80,7 +80,7 @@ class AletheiaTestCase(unittest.TestCase):
     def test__get_private_key_in_environment(self):
 
         private_key_path = os.path.join(
-            os.path.dirname(__file__), "data", "key.pem")
+            os.path.dirname(__file__), "data", "keys", "private.pem")
         with open(private_key_path) as f:
             self.env["ALETHEIA_PRIVATE_KEY"] = f.read()
 
@@ -91,7 +91,7 @@ class AletheiaTestCase(unittest.TestCase):
     def test__get_private_key_in_file(self):
         with self.env:
             aletheia = Aletheia(private_key_path=os.path.join(
-                os.path.dirname(__file__), "data", "key.pem"))
+                os.path.dirname(__file__), "data", "keys", "private.pem"))
             self.assertIsNotNone(aletheia._get_private_key())
 
     def test__get_private_key_doesnt_exist(self):
