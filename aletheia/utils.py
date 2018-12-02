@@ -12,6 +12,8 @@
 #   verify_bulk(paths)
 #
 
+from multiprocessing import Pool, cpu_count
+
 from .aletheia import Aletheia
 
 
@@ -35,14 +37,19 @@ def sign(path, domain, **kwargs):  # pragma: nocov
     Aletheia(**kwargs).sign(path, domain)
 
 
-def sign_bulk(paths, domain, **kwargs):  # pragma: nocov
+def sign_bulk(paths, domain, **kwargs):
     """
     Does what ``sign()`` does, but for lots of files, saving you the setup &
-    teardown time for key handling.
+    teardown time for key handling and parallelising it across all available
+    cores.
     """
-    aletheia = Aletheia(**kwargs)
-    for path in paths:
-        aletheia.sign(path, domain)
+
+    total_paths = len(paths)
+    per_thread = total_paths // cpu_count()
+    groups = [paths[_:_+per_thread] for _ in range(0, total_paths, per_thread)]
+
+    with Pool() as pool:
+        pool.map(__sign_files, [(_, kwargs, domain) for _ in groups])
 
 
 def verify(path, **kwargs):  # pragma: nocov
@@ -56,13 +63,41 @@ def verify(path, **kwargs):  # pragma: nocov
     return Aletheia(**kwargs).verify(path)
 
 
-def verify_bulk(paths, **kwargs):  # pragma: nocov
+def verify_bulk(paths, **kwargs):
     """
     Does what ``verify()`` does, but for lots of files, saving you the setup &
-    teardown time for key handling.
+    teardown time for key handling and parallelising it across all available
+    cores.
     """
+
+    total_paths = len(paths)
+    per_thread = total_paths // cpu_count()
+    groups = [paths[_:_+per_thread] for _ in range(0, total_paths, per_thread)]
+
+    with Pool() as pool:
+        r = pool.map(__verify_files, [(_, kwargs) for _ in groups])
+
+    return {k: v for d in r for k, v in d.items()}
+
+
+def __sign_files(args):
+
+    paths, kwargs, domain = args
+
     aletheia = Aletheia(**kwargs)
+
+    for path in paths:
+        aletheia.sign(path, domain)
+
+
+def __verify_files(args):
+
+    paths, kwargs = args
+
+    aletheia = Aletheia(**kwargs)
+
     results = {}
     for path in paths:
         results[path] = aletheia.verify(path)
+
     return results
