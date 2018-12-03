@@ -239,12 +239,11 @@ class Command:
         except FileNotFoundError:
             cls.__print_error("Aletheia can't find that file")
             return 1
-        except UnknownFileTypeError:
-            cls.__print_error(
-                "Aletheia doesn't know how to sign that file type")
+        except UnknownFileTypeError as e:
+            cls.__print_error(e)
             return 2
         except DependencyMissingError as e:
-            cls.__print_error(str(e))
+            cls.__print_error(e)
             return 4
         template = "\n  ✔  {} was signed with your private key\n"
         cprint(template.format(args.path), "green")
@@ -259,28 +258,23 @@ class Command:
         except FileNotFoundError:
             cls.__print_error("Aletheia can't find that file")
             return 1
-        except UnknownFileTypeError:
-            cls.__print_error("Aletheia doesn't recognise that file type")
+        except UnknownFileTypeError as e:
+            cls.__print_error(e)
             return 2
         except UnparseableFileError as e:
-            cls.__print_error(
-                str(e) or "Aletheia can't find a signature in that file"
-            )
+            cls.__print_error(e)
             return 3
-        except PublicKeyNotExistsError:
-            cls.__print_error(
-                "The public key location contained in the file header either "
-                "can't be accessed, or does not contain a public key",
-            )
+        except PublicKeyNotExistsError as e:
+            cls.__print_error(e)
             return 5
         except InvalidSignature:
             cls.__print_error("There's something wrong with that file")
             return 6
         except DependencyMissingError as e:
-            cls.__print_error(str(e))
+            cls.__print_error(e)
             return 7
         except UnacceptableLocationError as e:
-            cls.__print_error(str(e))
+            cls.__print_error(e)
             return 8
 
         template = "\n  ✔  The file is verified as having originated at {}\n"
@@ -291,7 +285,11 @@ class Command:
     @staticmethod
     def __print_error(message):
         message = textwrap.fill(
-            message, initial_indent="  ", subsequent_indent="  ", width=79)
+            str(message),
+            initial_indent="  ",
+            subsequent_indent="  ",
+            width=79
+        )
         cprint("\n{}\n".format(message), "red", attrs=("bold",))
 
 

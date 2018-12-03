@@ -1,22 +1,47 @@
-class UnknownFileTypeError(Exception):
-    pass
+class AletheiaException(Exception):
+
+    def __init__(self, message=None, *args):
+        super().__init__(message or self.get_default_message(), *args)
+
+    def get_default_message(self):
+        return "An unknown error occurred.  Sorry about that."
 
 
-class PublicKeyNotExistsError(Exception):
-    pass
+class UnknownFileTypeError(AletheiaException):
+    def get_default_message(self):
+        return "Aletheia doesn't recognise that file type"
 
 
-class UnparseableFileError(Exception):
-    pass
+class PublicKeyNotExistsError(AletheiaException):
+    def get_default_message(self):
+        return (
+            "The public key location contained in the file header either "
+            "can't be accessed, or does not contain a public key",
+        )
 
 
-class DependencyMissingError(Exception):
-    pass
+class UnparseableFileError(AletheiaException):
+    def get_default_message(self):
+        return "Aletheia can't find a signature in that file"
 
 
-class UnacceptableLocationError(Exception):
-    pass
+class DependencyMissingError(AletheiaException):
+    def get_default_message(self):
+        return (
+            "A software dependency appears to be missing, but this should "
+            "never happen.  Please report an issue at "
+            "https://github.com/danielquinn/pyletheia/issues"
+        )
 
 
-class UnrecognisedKey(Exception):
-    pass
+class UnacceptableLocationError(AletheiaException):
+    def get_default_message(self):
+        return "The domain name provided does not appear to be valid"
+
+
+class UnrecognisedKey(AletheiaException):
+    def get_default_message(self):
+        return (
+            "The key data provided could not be recognised as one formatted "
+            "for Aletheia"
+        )

@@ -45,7 +45,4 @@ def get_key(data: bytes) -> RSAPublicKey:
     if data.startswith(b"ssh-rsa "):
         return serialization.load_ssh_public_key(data, **kwargs)
 
-    raise UnrecognisedKey(
-        "The key data provided could not be recognised as one formatted for "
-        "PEM or OpenSSH"
-    )
+    raise UnrecognisedKey()
