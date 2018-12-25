@@ -3,6 +3,13 @@
 Changelog
 #########
 
+2.0.1
+=====
+
+* Use cleaner exception handling.
+* Allow for an update to dnspython without breaking Aletheia.
+
+
 2.0.0
 =====
 
