@@ -1,1 +1,1 @@
-This project has been moved to [Gitlab](https://gitlab.com/danielquinn/python-aletheia).
+This project has been moved to [Gitlab](https://gitlab.com/danielquinn/aletheia-python).
